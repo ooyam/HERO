@@ -1,13 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Spikeball_Big_controller : MonoBehaviour
+public class Spikeball_Small_controller : MonoBehaviour
 {
     // 回転速度
     private float rotSpeed = 1000f;
 
-    // 玉の移動速度
-    private float ballSpeed = -6;
+    // 玉のx軸移動速度
+    private float ballSpeedX = -4.67f;
+    // 玉のy軸移動速度
+    private float ballSpeedY = 3.77f;
 
     // Use this for initialization
     void Start()
@@ -23,6 +25,6 @@ public class Spikeball_Big_controller : MonoBehaviour
         this.transform.Rotate(this.rotSpeed * Time.deltaTime, this.rotSpeed * Time.deltaTime, 0);
 
         // 玉を撃つ
-        transform.Translate(this.ballSpeed * Time.deltaTime, 0, 0, Space.World);
+        transform.Translate(this.ballSpeedX * Time.deltaTime, this.ballSpeedY * Time.deltaTime, 0, Space.World);
     }
 }

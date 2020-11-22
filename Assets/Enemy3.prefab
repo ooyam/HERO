@@ -99,6 +99,7 @@ GameObject:
   - component: {fileID: 6585565513115929694}
   - component: {fileID: 6565591010800806304}
   - component: {fileID: 6575172795615604404}
+  - component: {fileID: -6636828900549044972}
   m_Layer: 0
   m_Name: Enemy3
   m_TagString: Enemy3
@@ -174,6 +175,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &-6636828900549044972
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6588198791504751018}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f48439f246df645449014a620c300a82, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Human1: {fileID: 6677534497439358726, guid: d016d4bacfa138b41b047761ed39e15a, type: 3}
+  Human2: {fileID: 9030506469453712962, guid: 71cb86229c47e7943b2a3fd091813c31, type: 3}
+  Human3: {fileID: 8302244056826834445, guid: 7eefb4db3390c7b489f3043b8a4f9943, type: 3}
+  Human4: {fileID: 7188887879866661089, guid: 9277791a6a6c2324092026588b4316f9, type: 3}
 --- !u!1 &6588532914926573842
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,7 +11,7 @@ public class EnemyGenerator : MonoBehaviour
     public GameObject enemy3Prefab;
 
     // 時間計測用の変数
-    public float[] delta = {0,0,0};
+    private float[] delta = {0,0,0};
 
     // Start is called before the first frame update
     void Start()
@@ -33,8 +33,8 @@ public class EnemyGenerator : MonoBehaviour
         this.delta[1] += Time.deltaTime;
         this.delta[2] += Time.deltaTime;
 
-        //画面内に敵1が7体以下の状態で､2秒以上経過したとき
-        if (Enemy1counts <= 7 && this.delta[0] > 2f)
+        //画面内に敵1が7体以下の状態で､3秒以上経過したとき
+        if (Enemy1counts <= 7 && this.delta[0] > 3f)
         {
             this.delta[0] = 0;
 

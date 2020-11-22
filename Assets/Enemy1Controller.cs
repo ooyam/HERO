@@ -18,16 +18,12 @@ public class Enemy1Controller : MonoBehaviour
     private int pos;
     //行動パターンランダム用変数
     private int Pattern;
-    //直線運動用変数
+    //往復動作用変数
     private float sin;
-    //移動速度代入用変数
-    private float speed;
     //初期移動停止用変数
     private int stop;
     //保持用変数
     private int keep;
-    //初期位置記憶用変数
-    private float defpos;
 
     //円運動の移動速度
     private float Rotspeed = 4f;
@@ -43,12 +39,15 @@ public class Enemy1Controller : MonoBehaviour
     //時間計算用変数
     private float delta;
 
+    //耐久値
+    private float hp = 10.0f;
+
     // Start is called before the first frame update
     void Start()
     {
-        //初期位置のランダム指定
+        //定位置のランダム指定
         pos = Random.Range(-1, 5);
-        //初期位置まで移動条件
+        //定位置まで移動条件
         stop = 0;
         //行動パターンのランダム選出
         Pattern = Random.Range(1,5);
@@ -57,7 +56,7 @@ public class Enemy1Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //初期位置まで移動
+        //定位置まで移動
         if (this.transform.position.x > pos * 2 && stop == 0)
         {
             transform.Translate(-EnemySpeedY * Time.deltaTime, 0, 0);
@@ -71,13 +70,14 @@ public class Enemy1Controller : MonoBehaviour
             //パターン1
             if (Pattern == 1)
             {
-                //スタートコルーチン
-                StartCoroutine(LinearMotion(EnemySpeedY, pos * 2, sin * YRange));
+                sin = Mathf.Sin(Time.time * EnemySpeedY);
+                transform.position = new Vector2(pos * 2, sin * YRange);
             }
             //パターン2
             else if (Pattern == 2)
             {
-                StartCoroutine(LinearMotion(EnemySpeedX, sin * XRange + XcenterRange, this.transform.position.y));
+                sin = Mathf.Sin(Time.time * EnemySpeedX);
+                transform.position = new Vector2(sin * XRange + XcenterRange, this.transform.position.y);
             }
             //パターン3
             else if (Pattern == 3)
@@ -92,11 +92,8 @@ public class Enemy1Controller : MonoBehaviour
             //パターン4
             else if (Pattern == 4)
             {
-                //X軸の設定
                 sinx = radius * Mathf.Sin(Time.time * Rotspeed);
-                //y軸の設定
                 cosy = radius * Mathf.Cos(Time.time * Rotspeed);
-                //自分のいる位置から座標を動かす。
                 this.transform.position = new Vector2(this.transform.position.x + sinx, this.transform.position.y - cosy);
             }
             //1個/2秒スパイクボール生成
@@ -107,14 +104,11 @@ public class Enemy1Controller : MonoBehaviour
                 delta = 0;
             }
         }
-        
-    }
-    private IEnumerator LinearMotion(float speed, float MoveX, float MoveY)
-    {
-        //0.3秒待機
-        yield return new WaitForSeconds(0.3f);
-        //動作開始
-        sin = Mathf.Sin(Time.time * speed );
-        transform.position = new Vector2(MoveX, MoveY);
+
+        //耐久値が0になったら破壊
+        if (hp <= 0)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }
