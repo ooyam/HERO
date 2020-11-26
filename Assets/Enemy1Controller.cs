@@ -28,7 +28,7 @@ public class Enemy1Controller : MonoBehaviour
     //円運動の移動速度
     private float Rotspeed = 4f;
     //円を描く半径
-    private float radius = 0.1f;
+    private float radius = 5f;
     //回転運動のx軸用変数
     float sinx;
     //回転運動のz軸用変数
@@ -39,8 +39,15 @@ public class Enemy1Controller : MonoBehaviour
     //時間計算用変数
     private float delta;
 
-    //耐久値
-    private float hp = 10.0f;
+    //接触検知用変数
+    private bool Contact = false;
+    //Playerのゲームオブジェクトを取得
+    private GameObject Player;
+    //Playerのアニメーションコンポーネントを入れる
+    private Animator PlayerAnimator;
+    //Playerアニメーション状態取得用変数
+    private bool Slide;
+    private bool SlideStart;
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +57,11 @@ public class Enemy1Controller : MonoBehaviour
         //定位置まで移動条件
         stop = 0;
         //行動パターンのランダム選出
-        Pattern = Random.Range(1,5);
+        Pattern = Random.Range(3,5);
+
+        //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
+        this.Player = GameObject.Find("Player");
+        this.PlayerAnimator = Player.GetComponent<Animator>();
 
     }
     // Update is called once per frame
@@ -83,17 +94,17 @@ public class Enemy1Controller : MonoBehaviour
             else if (Pattern == 3)
             {
                 //X軸の設定
-                sinx = radius * Mathf.Sin(Time.time * Rotspeed);
+                sinx = radius * Time.deltaTime * Mathf.Sin(Time.time * Rotspeed);
                 //y軸の設定
-                cosy = radius * Mathf.Cos(Time.time * Rotspeed);
+                cosy = radius * Time.deltaTime * Mathf.Cos(Time.time * Rotspeed);
                 //自分のいる位置から座標を動かす。
                 this.transform.position = new Vector2(sinx + this.transform.position.x, cosy + this.transform.position.y);
             }
             //パターン4
             else if (Pattern == 4)
             {
-                sinx = radius * Mathf.Sin(Time.time * Rotspeed);
-                cosy = radius * Mathf.Cos(Time.time * Rotspeed);
+                sinx = radius * Time.deltaTime * Mathf.Sin(Time.time * Rotspeed);
+                cosy = radius * Time.deltaTime * Mathf.Cos(Time.time * Rotspeed);
                 this.transform.position = new Vector2(this.transform.position.x + sinx, this.transform.position.y - cosy);
             }
             //1個/2秒スパイクボール生成
@@ -105,10 +116,20 @@ public class Enemy1Controller : MonoBehaviour
             }
         }
 
-        //耐久値が0になったら破壊
-        if (hp <= 0)
+        // Playerアニメーションの状態取得
+        Slide = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
+        SlideStart = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-Start"));
+        //plyaer攻撃時に接触したら破壊
+        if (Contact == true)
         {
             Destroy(this.gameObject);
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player" && (Slide == true || SlideStart == true))
+        {
+            Contact = true;
         }
     }
 }

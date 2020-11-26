@@ -12,6 +12,8 @@ GameObject:
   - component: {fileID: 1619395125549285316}
   - component: {fileID: 1611697269565111868}
   - component: {fileID: 5975203387459543162}
+  - component: {fileID: 680841877568158105}
+  - component: {fileID: 4287591865728688750}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Enemy1
@@ -94,4 +96,33 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spikeballPrefab: {fileID: 6668618985697469988, guid: fecf0e990cfe38545a5256d40f77d7a4,
     type: 3}
-  delta: 0
+--- !u!136 &680841877568158105
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589003043165160112}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.9
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: -0.098113626, z: 0}
+--- !u!54 &4287591865728688750
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589003043165160112}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0

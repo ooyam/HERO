@@ -13,12 +13,27 @@ public class Enemy2Controller : MonoBehaviour
     public GameObject spikeball_bigPrefab;
     public GameObject spikeball_smallPrefab;
 
+
     //耐久値
-    private float hp = 20.0f;
+    private float hp = 30.0f;
+    //接触検知用変数
+    private bool Contact = false;
+    //接触回数計算用変数
+    private int Counter = 0;
+    //Playerのゲームオブジェクトを取得
+    private GameObject Player;
+    //Playerのアニメーションコンポーネントを入れる
+    private Animator PlayerAnimator;
+    //Playerアニメーション状態取得用変数
+    private bool Slide;
+    private bool SlideStart;
 
     // Start is called before the first frame update
     void Start()
     {
+        //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
+        this.Player = GameObject.Find("Player");
+        this.PlayerAnimator = Player.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -51,10 +66,38 @@ public class Enemy2Controller : MonoBehaviour
             delta = 0;
         }
 
+        // Playerアニメーションの状態取得
+        Slide = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
+        SlideStart = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-Start"));
         //耐久値が0になったら破壊
-        if (hp <= 0)
+        if (Contact == true && Counter ==0)
         {
-            Destroy(this.gameObject);
+            delta = 0f;
+            Counter++;
+            this.hp -= 10f;
+            if (hp <= 0)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+        if (Counter >= 1)
+        {
+            //ダメージが入ると点滅(赤)
+            GetComponent<Renderer>().material.color = new Color32(255, 0, 0, 150);
+            delta += Time.deltaTime;
+            if (delta >= 0.3f)
+            {
+                GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 255);
+                Contact = false;
+                Counter = 0;
+            }
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player" && (Slide == true || SlideStart == true))
+        {
+            Contact = true;
         }
     }
 }

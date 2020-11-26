@@ -26,5 +26,18 @@ public class Spikeball_Small_controller : MonoBehaviour
 
         // 玉を撃つ
         transform.Translate(this.ballSpeedX * Time.deltaTime, this.ballSpeedY * Time.deltaTime, 0, Space.World);
+
+        //画面外に出たら破壊
+        if (this.transform.position.x < -10.5f || this.transform.position.x > 10.5f || this.transform.position.y < -6 || this.transform.position.y > 6)
+        {
+            Destroy(this.gameObject);
+        }
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player" || other.gameObject.tag == "Rescue ship")
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

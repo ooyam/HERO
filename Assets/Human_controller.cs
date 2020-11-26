@@ -5,42 +5,69 @@ using UnityEngine;
 public class Human_controller : MonoBehaviour
 {
     //落下速度
-    private float speed = -4;
+    private float speed = -2;
     //時間停止用変数
     private int stop = 0;
+    //Playerのゲームオブジェクトを取得
+    private GameObject Player;
+    //Playerのアニメーションコンポーネントを入れる
+    private Animator PlayerAnimator;
+    //Playerアニメーション状態取得用変数
+    private bool Catch;
+    private bool CatchRun;
 
     // Start is called before the first frame update
     void Start()
     {
-
+        this.Player = GameObject.Find("Player");
+        this.PlayerAnimator = Player.GetComponent<Animator>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //落下
-        if (this.transform.position.y > -6)
-        {
-            transform.Translate(0, speed * Time.deltaTime, 0,Space.World);
-        }
-        //ゲームオーバー
-        else
-        {
-            Destroy(this.gameObject);
-            //時間停止
-            Time.timeScale = 0;
-            //ゲームオーバー画面
+        // Playerアニメーションの状態取得
+        Catch = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
+        CatchRun = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
 
+        if (CatchRun == false)
+        {
+            //落下
+            if (this.transform.position.y > -6)
+            {
+                transform.Translate(0, speed * Time.deltaTime, 0, Space.World);
+            }
+            //ゲームオーバー
+            else
+            {
+                Destroy(this.gameObject);
+                //時間停止
+                Time.timeScale = 0;
+                //ゲームオーバー画面
+
+            }
+
+            //画面下端に来るとオブジェクト点滅
+            if (this.transform.position.y <= -5 && stop == 0)
+            {
+                //時間停止
+                Time.timeScale = 0;
+                //DestroyCoroutineを実行
+                StartCoroutine(WaitTimeCoroutine());
+                stop = 1;
+            }
         }
 
-        //画面下端に来るとオブジェクト点滅
-        if (this.transform.position.y <= -5 && stop == 0)
+        //CatchRun状態
+        if(CatchRun == true)
         {
-            //時間停止
-            Time.timeScale = 0;
-            //DestroyCoroutineを実行
-            StartCoroutine(WaitTimeCoroutine());
-            stop = 1;
+            this.transform.position = new Vector3(this.Player.transform.position.x - 0.1f, this.Player.transform.position.y + 0.1f, 0);
+            this.transform.rotation = Quaternion.Euler(0, 0, 0);
+            //Vを押すと離される
+            if(Input.GetKey(KeyCode.V))
+            {
+                this.transform.rotation = Quaternion.Euler(0, 0, 90);
+            }
         }
     }
     IEnumerator WaitTimeCoroutine()
@@ -53,5 +80,12 @@ public class Human_controller : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.3f);
         }
         Time.timeScale = 1;
+    }
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Rescue ship" && CatchRun == false)
+        {
+            Destroy(this.gameObject);
+        }
     }
 }

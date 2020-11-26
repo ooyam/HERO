@@ -6,12 +6,8 @@ public class Enemy3Controller : MonoBehaviour
 {
     // 回転速度
     private float rotSpeed = -200f;
-
     // 移動速度
     private float Speed = -3f;
-
-    //耐久値
-    private float hp = 10.0f;
 
     //人1～4を入れる
     public GameObject Human1;
@@ -36,6 +32,16 @@ public class Enemy3Controller : MonoBehaviour
     private float LightSpeed = 10f;
     private float degree = 180;
 
+    //接触検知用変数
+    private bool Contact = false;
+    //Playerのゲームオブジェクトを取得
+    private GameObject Player;
+    //Playerのアニメーションコンポーネントを入れる
+    private Animator PlayerAnimator;
+    //Playerアニメーション状態取得用変数
+    private bool Slide;
+    private bool SlideStart;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -48,6 +54,10 @@ public class Enemy3Controller : MonoBehaviour
         this.myMaterial = GetComponent<Renderer>().material;
         //オブジェクトの最初の色を設定
         myMaterial.SetColor("_EmissionColor", this.defaultColor * minEmission);
+
+        //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
+        this.Player = GameObject.Find("Player");
+        this.PlayerAnimator = Player.GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -95,14 +105,17 @@ public class Enemy3Controller : MonoBehaviour
             }
         }
 
-        //耐久値が0になったら破壊
-        if (hp <= 0)
+        // Playerアニメーションの状態取得
+        Slide = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
+        SlideStart = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-Start"));
+        //plyaer攻撃時に接触したら破壊
+        if (Contact == true)
         {
             //人を生成
             if (range == 1)
             {
                 human = Instantiate(Human1);
-            } 
+            }
             else if (range == 2)
             {
                 human = Instantiate(Human2);
@@ -119,6 +132,15 @@ public class Enemy3Controller : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "Player" && (Slide == true || SlideStart == true))
+        {
+            Contact = true;
+        }
+    }
+
     IEnumerator WaitTimeCoroutine()
     {
         yield return new WaitForSecondsRealtime(1.3f);
