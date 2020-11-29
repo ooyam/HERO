@@ -20,8 +20,12 @@ public class Enemy2Controller : MonoBehaviour
     private bool Contact = false;
     //接触回数計算用変数
     private int Counter = 0;
-    //Playerのゲームオブジェクトを取得
+    //Playerのゲームオブジェクトを入れる
     private GameObject Player;
+    //score_textのゲームオブジェクトを入れる
+    private GameObject ScoreText;
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
     //Playerのアニメーションコンポーネントを入れる
     private Animator PlayerAnimator;
     //Playerアニメーション状態取得用変数
@@ -34,6 +38,11 @@ public class Enemy2Controller : MonoBehaviour
         //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
         this.Player = GameObject.Find("Player");
         this.PlayerAnimator = Player.GetComponent<Animator>();
+
+        //score_textゲームオブジェクトの取得
+        ScoreText = GameObject.Find("score_text");
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
     }
 
     // Update is called once per frame
@@ -77,6 +86,9 @@ public class Enemy2Controller : MonoBehaviour
             this.hp -= 10f;
             if (hp <= 0)
             {
+                //ポイントの加算(score_textの呼び出し)
+                ScoreText.GetComponent<score_text_Controller>().Enemy2Score();
+                GameOverText.GetComponent<GameOver_Text_Controller>().Enemy2Score();
                 Destroy(this.gameObject);
             }
         }

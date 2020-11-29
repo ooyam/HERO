@@ -13,9 +13,14 @@ public class Rescueship_controller : MonoBehaviour
     //コルーチン重複防止用
     private int stop = 0;
 
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
+
     // Start is called before the first frame update
     void Start()
     {
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
     }
 
     // Update is called once per frame
@@ -76,5 +81,8 @@ public class Rescueship_controller : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.2f);
         }
         Destroy(this.gameObject);
+        yield return new WaitForSecondsRealtime(0.2f);
+        //ゲームオーバー画面の呼び出し
+        GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
     }
 }

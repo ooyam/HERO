@@ -34,8 +34,12 @@ public class Enemy3Controller : MonoBehaviour
 
     //接触検知用変数
     private bool Contact = false;
-    //Playerのゲームオブジェクトを取得
+    //Playerのゲームオブジェクトを入れる
     private GameObject Player;
+    //score_textのゲームオブジェクトを入れる
+    private GameObject ScoreText;
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
     //Playerのアニメーションコンポーネントを入れる
     private Animator PlayerAnimator;
     //Playerアニメーション状態取得用変数
@@ -58,6 +62,11 @@ public class Enemy3Controller : MonoBehaviour
         //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
         this.Player = GameObject.Find("Player");
         this.PlayerAnimator = Player.GetComponent<Animator>();
+
+        //score_textゲームオブジェクトの取得
+        ScoreText = GameObject.Find("score_text");
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
     }
 
     // Update is called once per frame
@@ -77,8 +86,8 @@ public class Enemy3Controller : MonoBehaviour
             Destroy(this.gameObject);
             //時間停止
             Time.timeScale = 0;
-            //ゲームオーバー画面
-
+            //ゲームオーバー画面の呼び出し
+            GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
         }
 
         //画面左端に来るとオブジェクト点滅
@@ -129,6 +138,9 @@ public class Enemy3Controller : MonoBehaviour
                 human = Instantiate(Human4);
             }
             human.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            //ポイントの加算(score_textの呼び出し)
+            ScoreText.GetComponent<score_text_Controller>().EnemyScore();
+            GameOverText.GetComponent<GameOver_Text_Controller>().Enemy3Score();
             Destroy(this.gameObject);
         }
     }

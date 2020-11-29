@@ -32,11 +32,16 @@ public class Player_Controller : MonoBehaviour
     private bool Death;
     private bool DeathEnd;
 
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
+
     // Start is called before the first frame update
     void Start()
     {
         //Animatorコンポーネントを取得
         this.myAnimator = GetComponent<Animator>();
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
     }
 
     // Update is called once per frame
@@ -126,7 +131,7 @@ public class Player_Controller : MonoBehaviour
         //縦方向の移動速度
         float inputVelocityY = 0;
         //CatchRun中は移動速度減
-        this.speed = CatchRun ? 3.0f : 7.5f;
+        this.speed = CatchRun ? 5.0f : 7.5f;
 
         //playerの移動(攻撃動作時・PlayerDeth時は移動不可にする)
         if (SlideStart == false && Slide == false && SlideEnd == false && Death == false && DeathEnd == false)
@@ -289,6 +294,10 @@ public class Player_Controller : MonoBehaviour
             if(this.HP <= 0)
             {
                 this.myAnimator.SetBool("Death-end_bool", true);
+                //時間停止
+                Time.timeScale = 0;
+                //ゲームオーバー画面の呼び出し
+                GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
             }
         }
     }

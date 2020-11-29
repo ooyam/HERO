@@ -41,8 +41,12 @@ public class Enemy1Controller : MonoBehaviour
 
     //接触検知用変数
     private bool Contact = false;
-    //Playerのゲームオブジェクトを取得
+    //Playerのゲームオブジェクトを入れる
     private GameObject Player;
+    //score_textのゲームオブジェクトを入れる
+    private GameObject ScoreText;
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
     //Playerのアニメーションコンポーネントを入れる
     private Animator PlayerAnimator;
     //Playerアニメーション状態取得用変数
@@ -63,6 +67,10 @@ public class Enemy1Controller : MonoBehaviour
         this.Player = GameObject.Find("Player");
         this.PlayerAnimator = Player.GetComponent<Animator>();
 
+        //score_textゲームオブジェクトの取得
+        ScoreText = GameObject.Find("score_text");
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
     }
     // Update is called once per frame
     void Update()
@@ -122,6 +130,9 @@ public class Enemy1Controller : MonoBehaviour
         //plyaer攻撃時に接触したら破壊
         if (Contact == true)
         {
+            //ポイントの加算(score_textの呼び出し)
+            ScoreText.GetComponent<score_text_Controller>().EnemyScore();
+            GameOverText.GetComponent<GameOver_Text_Controller>().Enemy1Score();
             Destroy(this.gameObject);
         }
     }

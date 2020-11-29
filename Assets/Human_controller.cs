@@ -12,6 +12,10 @@ public class Human_controller : MonoBehaviour
     private GameObject Player;
     //Playerのアニメーションコンポーネントを入れる
     private Animator PlayerAnimator;
+    //score_textのゲームオブジェクトを入れる
+    private GameObject ScoreText;
+    //GameOver_Textのゲームオブジェクトを入れる
+    private GameObject GameOverText;
     //Playerアニメーション状態取得用変数
     private bool Catch;
     private bool CatchRun;
@@ -19,8 +23,15 @@ public class Human_controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Playerゲームオブジェクトの取得
         this.Player = GameObject.Find("Player");
         this.PlayerAnimator = Player.GetComponent<Animator>();
+
+        //score_textゲームオブジェクトの取得
+        ScoreText = GameObject.Find("score_text");
+        //GameOver_Textゲームオブジェクトの取得
+        GameOverText = GameObject.Find("GameOver_Text");
+        
     }
 
     // Update is called once per frame
@@ -43,8 +54,8 @@ public class Human_controller : MonoBehaviour
                 Destroy(this.gameObject);
                 //時間停止
                 Time.timeScale = 0;
-                //ゲームオーバー画面
-
+                //ゲームオーバー画面の呼び出し
+                GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
             }
 
             //画面下端に来るとオブジェクト点滅
@@ -85,6 +96,9 @@ public class Human_controller : MonoBehaviour
     {
         if (other.gameObject.tag == "Rescue ship" && CatchRun == false)
         {
+            //ポイントの加算(score_textの呼び出し)
+            ScoreText.GetComponent<score_text_Controller>().HumanScore();
+            GameOverText.GetComponent<GameOver_Text_Controller>().HumanScore();
             Destroy(this.gameObject);
         }
     }
