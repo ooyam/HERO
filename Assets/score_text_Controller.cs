@@ -20,6 +20,11 @@ public class score_text_Controller : MonoBehaviour
         //scoreの表示
         GetComponent<Text>().text = "Score:" + score.ToString();
     }
+    //GameOver判断
+    public void GameOverJudge()
+    {
+        Destroy(this.gameObject);
+    }
     //Humanスクリプトから呼ばれた際にスコア加算
     public void HumanScore()
     {

@@ -3,7 +3,10 @@ guid: 1afb4c29c7707e4449148ed76cb1ee4a
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - spikeballPrefab: {instanceID: 0}
+  - Effect: {fileID: 4629904087263008873, guid: 202247d39ec0c2042bc4f84a4f988cfe,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -12,6 +12,8 @@ public class Enemy2Controller : MonoBehaviour
     //スパイクボールを入れる
     public GameObject spikeball_bigPrefab;
     public GameObject spikeball_smallPrefab;
+    //エフェクトを入れる
+    public GameObject Effect;
 
 
     //耐久値
@@ -89,6 +91,10 @@ public class Enemy2Controller : MonoBehaviour
                 //ポイントの加算(score_textの呼び出し)
                 ScoreText.GetComponent<score_text_Controller>().Enemy2Score();
                 GameOverText.GetComponent<GameOver_Text_Controller>().Enemy2Score();
+                //Effectを呼び出す
+                GameObject effect = Instantiate(Effect);
+                effect.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+                //破壊
                 Destroy(this.gameObject);
             }
         }
@@ -111,5 +117,10 @@ public class Enemy2Controller : MonoBehaviour
         {
             Contact = true;
         }
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        Contact = true;
     }
 }

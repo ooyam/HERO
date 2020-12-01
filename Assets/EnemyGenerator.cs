@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class EnemyGenerator : MonoBehaviour
 {
-
     //敵キャラを入れる
     public GameObject enemy1Prefab;
     public GameObject enemy2Prefab;

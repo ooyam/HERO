@@ -12,6 +12,8 @@ TagManager:
   - Rescue ship
   - Red ball
   - White ball
+  - Player Effect
+  - Enemy3 Effect
   layers:
   - Default
   - TransparentFX

@@ -42,6 +42,8 @@ public class Enemy3Controller : MonoBehaviour
     private GameObject GameOverText;
     //Playerのアニメーションコンポーネントを入れる
     private Animator PlayerAnimator;
+    //エフェクトを入れる
+    public GameObject Effect;
     //Playerアニメーション状態取得用変数
     private bool Slide;
     private bool SlideStart;
@@ -49,8 +51,6 @@ public class Enemy3Controller : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //回転を開始する角度を設定
-        this.transform.Rotate(0, Random.Range(0, 360), 0);
         //人のランダム生成
         range = Random.Range(1, 5);
 
@@ -88,6 +88,8 @@ public class Enemy3Controller : MonoBehaviour
             Time.timeScale = 0;
             //ゲームオーバー画面の呼び出し
             GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
+            //score表示を消す
+            ScoreText.GetComponent<score_text_Controller>().GameOverJudge();
         }
 
         //画面左端に来るとオブジェクト点滅
@@ -120,6 +122,9 @@ public class Enemy3Controller : MonoBehaviour
         //plyaer攻撃時に接触したら破壊
         if (Contact == true)
         {
+            //Effectを呼び出す
+            GameObject effect = Instantiate(Effect);
+            effect.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
             //人を生成
             if (range == 1)
             {

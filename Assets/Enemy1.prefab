@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 5975203387459543162}
   - component: {fileID: 680841877568158105}
   - component: {fileID: 4287591865728688750}
+  - component: {fileID: 2585974281204664954}
   m_Layer: 0
   m_Name: Enemy1
   m_TagString: Enemy1
@@ -96,6 +97,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spikeballPrefab: {fileID: 6668618985697469988, guid: fecf0e990cfe38545a5256d40f77d7a4,
     type: 3}
+  Effect: {fileID: 4629904087263008873, guid: 202247d39ec0c2042bc4f84a4f988cfe, type: 3}
 --- !u!136 &680841877568158105
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -126,3 +128,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!143 &2585974281204664954
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1589003043165160112}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 1.459852
+  m_Radius: 0.7794717
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}

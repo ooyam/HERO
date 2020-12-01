@@ -11,6 +11,9 @@ public class Spikeball_Small_controller : MonoBehaviour
     // 玉のy軸移動速度
     private float ballSpeedY = 3.77f;
 
+    //エフェクトを入れる
+    public GameObject Effect;
+
     // Use this for initialization
     void Start()
     {
@@ -37,6 +40,10 @@ public class Spikeball_Small_controller : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Rescue ship")
         {
+            //エフェクトを呼び出す
+            GameObject effect = Instantiate(Effect);
+            effect.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, 3f);
+            //破壊
             Destroy(this.gameObject);
         }
     }

@@ -36,6 +36,8 @@ public class Enemy1Controller : MonoBehaviour
 
     //スパイクボールを入れる
     public GameObject spikeballPrefab;
+    //エフェクトを入れる
+    public GameObject Effect;
     //時間計算用変数
     private float delta;
 
@@ -133,14 +135,23 @@ public class Enemy1Controller : MonoBehaviour
             //ポイントの加算(score_textの呼び出し)
             ScoreText.GetComponent<score_text_Controller>().EnemyScore();
             GameOverText.GetComponent<GameOver_Text_Controller>().Enemy1Score();
+            //Effectを呼び出す
+            GameObject effect = Instantiate(Effect);
+            effect.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            //破壊
             Destroy(this.gameObject);
         }
     }
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Player" && (Slide == true || SlideStart == true))
+        if ((other.gameObject.tag == "Player" && (Slide == true || SlideStart == true)))
         {
             Contact = true;
         }
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        Contact = true;
     }
 }

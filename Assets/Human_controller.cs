@@ -56,6 +56,8 @@ public class Human_controller : MonoBehaviour
                 Time.timeScale = 0;
                 //ゲームオーバー画面の呼び出し
                 GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
+                //score表示を消す
+                ScoreText.GetComponent<score_text_Controller>().GameOverJudge();
             }
 
             //画面下端に来るとオブジェクト点滅

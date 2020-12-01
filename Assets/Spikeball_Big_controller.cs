@@ -5,9 +5,11 @@ public class Spikeball_Big_controller : MonoBehaviour
 {
     // 回転速度
     private float rotSpeed = 1000f;
-
     // 玉の移動速度
     private float ballSpeed = -6;
+
+    //エフェクトを入れる
+    public GameObject Effect;
 
     // Use this for initialization
     void Start()
@@ -35,6 +37,10 @@ public class Spikeball_Big_controller : MonoBehaviour
     {
         if (other.gameObject.tag == "Player" || other.gameObject.tag == "Rescue ship")
         {
+            //エフェクトを呼び出す
+            GameObject effect = Instantiate(Effect);
+            effect.transform.position = new Vector3(this.transform.position.x, this.transform.position.y, 3f);
+            //破壊
             Destroy(this.gameObject);
         }
     }

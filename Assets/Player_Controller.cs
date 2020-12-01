@@ -6,6 +6,9 @@ public class Player_Controller : MonoBehaviour
 {
     //アニメーションするためのコンポーネントを入れる
     private Animator myAnimator;
+    //BoxColliderのコンポーネントを入れる
+    private BoxCollider myColliderComponent;
+
 
     //Player体力
     private float HP = 100.0f;
@@ -19,10 +22,14 @@ public class Player_Controller : MonoBehaviour
     private float HeightRange = 4f;
     //現在のposition用変数
     private Vector3 pos;
+    //現在のrotation用変数
+    private Vector3 rot;
     //攻撃時移動用
     private int AttakMove = 0;
     //時間計算用変数
     private float delta = 0;
+    //transformキャッシュ用
+    private Transform _transform;
     //アニメーション状態取得用変数
     private bool Catch;
     private bool SlideStart;
@@ -31,9 +38,17 @@ public class Player_Controller : MonoBehaviour
     private bool CatchRun;
     private bool Death;
     private bool DeathEnd;
+    //PlayerEffectの有無確認用変数
+    private int EffectCounts;
 
     //GameOver_Textのゲームオブジェクトを入れる
     private GameObject GameOverText;
+    //score_textのゲームオブジェクトを入れる
+    private GameObject ScoreText;
+    //Player_effectのゲームオブジェクトを入れる
+    public GameObject PlayerEffect;
+    //Player_effectのインスタンス用変数
+    public GameObject Effect;
 
     // Start is called before the first frame update
     void Start()
@@ -42,13 +57,20 @@ public class Player_Controller : MonoBehaviour
         this.myAnimator = GetComponent<Animator>();
         //GameOver_Textゲームオブジェクトの取得
         GameOverText = GameObject.Find("GameOver_Text");
+        //score_textゲームオブジェクトの取得
+        ScoreText = GameObject.Find("score_text");
+        //BoxColliderのコンポーネント取得
+        myColliderComponent = GetComponent<BoxCollider>();
+        //transformをキャッシュしておく
+        _transform = transform;
     }
 
     // Update is called once per frame
     void Update()
     {
-        //現在値把握用
-        this.pos = transform.position;
+        //現在値/向き把握用
+        this.pos = _transform.position;
+        this.rot = _transform.localEulerAngles;
         // アニメーション状態取得
         SlideStart = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-start"));
         Slide = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
@@ -57,41 +79,46 @@ public class Player_Controller : MonoBehaviour
         CatchRun = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
         Death = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death"));
         DeathEnd = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death-end"));
+        //PlayerEffectの有無
+        EffectCounts = GameObject.FindGameObjectsWithTag("Player Effect").Length;
 
         // スペースキーを押したとき(攻撃動作)
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && SlideStart != true && Slide != true && SlideEnd != true)
         {
             // Animatorコンポーネントを取得し、"Slide-start_trigger""Slide_trigger"をtrueにする
             this.myAnimator.SetTrigger("Slide-start_trigger");
             this.myAnimator.SetTrigger("Slide_trigger");
+            //エフェクトを出力する
+            Effect = Instantiate(PlayerEffect);
+            Effect.transform.position = new Vector3(this.pos.x - 0.4f, this.pos.y - 0.67f, -5f);
+            Effect.transform.rotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
+            //自身のコンポーネントから当たり判定を変更する
+            myColliderComponent.center = new Vector3(0f, -1f, 0f);
+            myColliderComponent.size = new Vector3(2f, 3f, 20f);
         }
         //攻撃動作時常時稼働
-        if (SlideStart == true || Slide == true)
+        if (SlideStart == true || Slide == true && SlideEnd == false)
         {
             //画面端で画面外側を向いている際は､攻撃時前進しない
             //右端右向き
             if (this.pos.x >= WidthRange && (this.transform.rotation == Quaternion.Euler(0, 0, 0) || this.transform.rotation == Quaternion.Euler(0, 0, 45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
             {
-                this.myAnimator.SetTrigger("Slide-end_trigger");
-                AttakMove = 0;
+                Slide_End();
             }
             //左端左向き
             else if (this.pos.x <= -WidthRange && (this.transform.rotation == Quaternion.Euler(0, 180, 0) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 180, -45)))
             {
-                this.myAnimator.SetTrigger("Slide-end_trigger");
-                AttakMove = 0;
+                Slide_End();
             }
             //上端上向き
             else if (this.pos.y >= HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, 90) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 0, 45)))
             {
-                this.myAnimator.SetTrigger("Slide-end_trigger");
-                AttakMove = 0;
+                Slide_End();
             }
             //下端下向き
             else if (this.pos.y <= -HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, -90) || this.transform.rotation == Quaternion.Euler(0, 180, -45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
             {
-                this.myAnimator.SetTrigger("Slide-end_trigger");
-                AttakMove = 0;
+                Slide_End();
             }
             //攻撃時前進する
             else
@@ -100,15 +127,28 @@ public class Player_Controller : MonoBehaviour
             }
         }
         //攻撃時前進
-        if (this.AttakMove == 1)
+        if (this.AttakMove == 1 && (SlideStart == true || Slide == true))
         {
             transform.Translate(Attackspeed * Time.deltaTime, 0, 0);
-            delta += Time.deltaTime;
-            if (delta >= 0.15f)
+            //エフェクト移動
+            if (EffectCounts >= 1)
             {
-                AttakMove = 0;
+                Effect.transform.Translate(Attackspeed * Time.deltaTime, 0, 0);
+            }
+            delta += Time.deltaTime;
+            if (delta >= 0.25f)
+            {
                 delta = 0;
+                this.AttakMove = 0;
                 this.myAnimator.SetTrigger("Slide-end_trigger");
+                //当たり判定を元に戻す
+                myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
+                myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
+                if (EffectCounts >= 1)
+                {
+                    //エフェクトを破壊する
+                    Effect.GetComponent<Player_effect_Controller>().DestroyObj();
+                }
             }
         }
 
@@ -276,6 +316,20 @@ public class Player_Controller : MonoBehaviour
             this.myAnimator.SetBool("Idle_bool",true);
         }
     }
+    void Slide_End()
+    {
+        this.AttakMove = 0;
+        this.myAnimator.SetTrigger("Slide-end_trigger");
+        //当たり判定を元に戻す
+        myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
+        myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
+        if (EffectCounts >= 1)
+        {
+            //エフェクトを破壊する
+            Effect.GetComponent<Player_effect_Controller>().DestroyObj();
+        }
+
+    }
 
     void OnTriggerStay(Collider other)
     {
@@ -298,6 +352,8 @@ public class Player_Controller : MonoBehaviour
                 Time.timeScale = 0;
                 //ゲームオーバー画面の呼び出し
                 GameOverText.GetComponent<GameOver_Text_Controller>().GameOverJudge();
+                //score表示を消す
+                ScoreText.GetComponent<score_text_Controller>().GameOverJudge();
             }
         }
     }
