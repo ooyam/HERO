@@ -76,11 +76,10 @@ public class Human_controller : MonoBehaviour
         {
             this.transform.position = new Vector3(this.Player.transform.position.x - 0.1f, this.Player.transform.position.y + 0.1f, 0);
             this.transform.rotation = Quaternion.Euler(0, 0, 0);
-            //Vを押すと離される
-            if(Input.GetKey(KeyCode.V))
-            {
-                this.transform.rotation = Quaternion.Euler(0, 0, 90);
-            }
+        }
+        else
+        {
+            this.transform.rotation = Quaternion.Euler(0, 0, 90);
         }
     }
     IEnumerator WaitTimeCoroutine()

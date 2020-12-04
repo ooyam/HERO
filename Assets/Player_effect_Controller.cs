@@ -15,7 +15,7 @@ public class Player_effect_Controller : MonoBehaviour
     void Update()
     {
         delta += Time.deltaTime;
-        if(delta >= 0.5f)
+        if(delta >= 0.3f)
         {
             Destroy(this.gameObject);
         }

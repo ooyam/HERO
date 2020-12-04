@@ -38,9 +38,26 @@ public class GameOver_Text_Controller : MonoBehaviour
     //BG_0を入れる
     public GameObject BG_0;
 
+    //Butoonを入れる
+    private GameObject AButton;
+    private GameObject CButton;
+    private GameObject RButton;
+    //Componentをキャッシュする
+    private Transform AButtonTra;
+    private Transform CButtonTra;
+    private Transform RButtonTra;
+
     // Start is called before the first frame update
     void Start()
     {
+        //Butoonの取得
+        AButton = GameObject.Find("AttackButton");
+        CButton = GameObject.Find("CatchButton");
+        RButton = GameObject.Find("ReleaseButton");
+        //Componentの取得
+        AButtonTra = AButton.GetComponent<Transform>();
+        CButtonTra = CButton.GetComponent<Transform>();
+        RButtonTra = RButton.GetComponent<Transform>();
 
     }
 
@@ -50,14 +67,14 @@ public class GameOver_Text_Controller : MonoBehaviour
         if (GameOver == true)
         {
             //シーンをロードする
-            if (Input.GetKeyDown(KeyCode.Space) && Touch >= 1)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))&& Touch >= 1)
             {
                 //時間を戻す
                 Time.timeScale = 1;
                 //SampleSceneを読み込む
                 SceneManager.LoadScene("SampleScene");
             }
-            //救助船が破壊された際は､1秒後に時間を止める
+            //Playerが倒されたor救助船が破壊された際は､1秒後に時間を止める
             if (ShipDeth == true && _Text == false)
             {
                 delta += Time.deltaTime;
@@ -68,15 +85,19 @@ public class GameOver_Text_Controller : MonoBehaviour
                     GetComponent<Text>().text = "Game Over\n\n\n";
                     _Text = true;
                 }
+                //Buttonを見えなくする
+                Buttan();
             }
             else
             {
                 //GameOverの表示
                 GetComponent<Text>().text = "Game Over\n\n\n";
                 _Text = true;
+                //Buttonを見えなくする
+                Buttan();
             }
             //score用敵･人オブジェクトの表示
-            if (Input.GetKeyDown(KeyCode.Space) && Touch == 0 && _Text == true)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 0 && _Text == true)
             {
                 //敵1オブジェクトの出力
                 GameObject Enemy1obj = Instantiate(enemy1);
@@ -110,6 +131,13 @@ public class GameOver_Text_Controller : MonoBehaviour
                                              + Enemy2Total + "体\n\n救出した人の数\n\n      30p  " + HumanTotal + "人\n------------------------------------\nScore : " + RustScore;
             }
         }
+    }
+    //Buttanを見えなくする
+    void Buttan()
+    {
+        AButtonTra.position = new Vector3(100, -100, 0);
+        CButtonTra.position = new Vector3(100, -100, 0);
+        RButtonTra.position = new Vector3(100, -100, 0);
     }
     //GameOver判断
     public void GameOverJudge()

@@ -23,6 +23,8 @@ public class Rescueship_controller : MonoBehaviour
     private GameObject GameOverText;
     //score_textのゲームオブジェクトを入れる
     private GameObject ScoreText;
+    //HPゲージのゲームオブジェクトを入れる
+    private GameObject HpGauge;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +33,8 @@ public class Rescueship_controller : MonoBehaviour
         GameOverText = GameObject.Find("GameOver_Text");
         //score_textゲームオブジェクトの取得
         ScoreText = GameObject.Find("score_text");
+        //HPゲージゲームオブジェクトの取得
+        HpGauge = GameObject.Find("Rescue ship HP");
     }
 
     // Update is called once per frame
@@ -90,6 +94,8 @@ public class Rescueship_controller : MonoBehaviour
             Contact = true;
             this.HP -= 10f;
             GetComponent<Renderer>().material.color = new Color32(255, 0, 0, 255);
+            //HPゲージを減らす
+            HpGauge.GetComponent<RescueShipHP_Controller> ().Scale();
         }
     }
     IEnumerator WaitTimeCoroutine()

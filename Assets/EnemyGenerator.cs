@@ -122,7 +122,7 @@ public class EnemyGenerator : MonoBehaviour
                 //生成場所のランダム指定
                 float Enemy3pos = Random.Range(-2.14f, 1.25f);
                 GameObject Enemy3obj = Instantiate(enemy3Prefab);
-                Enemy3obj.transform.position = new Vector2(11, Enemy3pos);
+                Enemy3obj.transform.position = new Vector3(11, Enemy3pos, -2);
             }
         }
     }

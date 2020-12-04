@@ -12,6 +12,8 @@ MonoImporter:
       type: 3}
   - Human4: {fileID: 7188887879866661089, guid: 9277791a6a6c2324092026588b4316f9,
       type: 3}
+  - Effect: {fileID: 1098713144268091283, guid: 176a8f2b01374eb4fa96dc8635efe780,
+      type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
