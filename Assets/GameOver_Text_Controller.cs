@@ -7,11 +7,12 @@ using UnityEngine.SceneManagement;
 public class GameOver_Text_Controller : MonoBehaviour
 {
     //GameOverの判断
-    private bool GameOver;
+    public bool GameOver;
     //GameOverの判断
     private bool ShipDeth;
     //text表示中の確認
     private bool _Text;
+    private bool _Text1;
     //Componentの取得
     private Component myComponent;
     //Humanを救出した総数
@@ -47,6 +48,9 @@ public class GameOver_Text_Controller : MonoBehaviour
     private Transform CButtonTra;
     private Transform RButtonTra;
 
+    //SEを入れる
+    private AudioSource SE;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -59,6 +63,8 @@ public class GameOver_Text_Controller : MonoBehaviour
         CButtonTra = CButton.GetComponent<Transform>();
         RButtonTra = RButton.GetComponent<Transform>();
 
+        //SEを取得
+        SE = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -67,7 +73,7 @@ public class GameOver_Text_Controller : MonoBehaviour
         if (GameOver == true)
         {
             //シーンをロードする
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0))&& Touch >= 1)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch >= 1)
             {
                 //時間を戻す
                 Time.timeScale = 1;
@@ -80,24 +86,26 @@ public class GameOver_Text_Controller : MonoBehaviour
                 delta += Time.deltaTime;
                 if (delta >= 1.0f)
                 {
-                    Time.timeScale = 0;
+                    //SEを出す
+                    SE.Play();
                     //GameOverの表示
-                    GetComponent<Text>().text = "Game Over\n\n\n";
-                    _Text = true;
+                    GetComponent<Text>().text = "Game Over\n\n";
+                    //Buttonを見えなくする
+                    StartCoroutine("GameOverCoroutine");
+                    Time.timeScale = 0;
                 }
-                //Buttonを見えなくする
-                Buttan();
             }
-            else
+            else if(ShipDeth == false && _Text == false)
             {
+                //SEを出す
+                SE.Play();
                 //GameOverの表示
-                GetComponent<Text>().text = "Game Over\n\n\n";
-                _Text = true;
+                GetComponent<Text>().text = "Game Over\n\n";
                 //Buttonを見えなくする
-                Buttan();
+                StartCoroutine("GameOverCoroutine");
             }
             //score用敵･人オブジェクトの表示
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 0 && _Text == true)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 0 && _Text1 == true)
             {
                 //敵1オブジェクトの出力
                 GameObject Enemy1obj = Instantiate(enemy1);
@@ -133,11 +141,17 @@ public class GameOver_Text_Controller : MonoBehaviour
         }
     }
     //Buttanを見えなくする
-    void Buttan()
+    IEnumerator GameOverCoroutine()
     {
+        _Text = true;
         AButtonTra.position = new Vector3(100, -100, 0);
         CButtonTra.position = new Vector3(100, -100, 0);
         RButtonTra.position = new Vector3(100, -100, 0);
+        for (int i = 0; i <= 1; i++)
+        {
+            yield return new WaitForSecondsRealtime(2.0f);
+            _Text1 = true;
+        }
     }
     //GameOver判断
     public void GameOverJudge()

@@ -23,7 +23,7 @@ public class score_text_Controller : MonoBehaviour
     //GameOver判断
     public void GameOverJudge()
     {
-        Destroy(this.gameObject);
+        this.transform.position += new Vector3(0, 100,0);
     }
     //Humanスクリプトから呼ばれた際にスコア加算
     public void HumanScore()

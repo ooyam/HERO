@@ -14,6 +14,8 @@ public class Enemy2Controller : MonoBehaviour
     public GameObject spikeball_smallPrefab;
     //エフェクトを入れる
     public GameObject Effect;
+    //SEを入れる
+    private AudioSource SE;
 
 
     //耐久値
@@ -45,6 +47,8 @@ public class Enemy2Controller : MonoBehaviour
         ScoreText = GameObject.Find("score_text");
         //GameOver_Textゲームオブジェクトの取得
         GameOverText = GameObject.Find("GameOver_Text");
+        //SEを取得
+        SE = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -83,6 +87,8 @@ public class Enemy2Controller : MonoBehaviour
         //耐久値が0になったら破壊
         if (Contact == true && Counter ==0)
         {
+            //SEを出す
+            SE.Play();
             delta = 0f;
             Counter++;
             this.hp -= 10f;
@@ -121,6 +127,11 @@ public class Enemy2Controller : MonoBehaviour
     //パーティクル当たり判定
     void OnParticleCollision(GameObject obj)
     {
+        //Waveに接触した際は即破壊
+        if(obj.gameObject.tag == "Wave")
+        {
+            this.hp -= 30;
+        }
         Contact = true;
     }
 }

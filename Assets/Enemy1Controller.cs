@@ -38,6 +38,12 @@ public class Enemy1Controller : MonoBehaviour
     public GameObject spikeballPrefab;
     //エフェクトを入れる
     public GameObject Effect;
+    //Itemを入れる
+    public GameObject ItemWave;
+    public GameObject ItemRepair;
+    public GameObject ItemRecovery;
+    //ItemDropランダム用変数
+    private int Drop;
     //時間計算用変数
     private float delta;
 
@@ -63,7 +69,9 @@ public class Enemy1Controller : MonoBehaviour
         //定位置まで移動条件
         stop = 0;
         //行動パターンのランダム選出
-        Pattern = Random.Range(3,5);
+        Pattern = Random.Range(1,5);
+        //DropItemのランダム指定
+        Drop = Random.Range(1, 31);
 
         //Playerのゲームオブジェクトとアニメーターコンポーネントの取得
         this.Player = GameObject.Find("Player");
@@ -135,9 +143,28 @@ public class Enemy1Controller : MonoBehaviour
             //ポイントの加算(score_textの呼び出し)
             ScoreText.GetComponent<score_text_Controller>().EnemyScore();
             GameOverText.GetComponent<GameOver_Text_Controller>().Enemy1Score();
-            //Effectを呼び出す
+            //Effectの生成
             GameObject effect = Instantiate(Effect);
             effect.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            //ItemWaveの生成
+            if(Drop == 1)
+            {
+                GameObject Item = Instantiate(ItemWave);
+                Item.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+
+            }
+            //ItemRepairの生成
+            else if (Drop <= 3)
+            {
+                GameObject Item = Instantiate(ItemRepair);
+                Item.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            }
+            //ItemRecoveryの生成
+            else if (Drop <= 5)
+            {
+                GameObject Item = Instantiate(ItemRecovery);
+                Item.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            }
             //破壊
             Destroy(this.gameObject);
         }

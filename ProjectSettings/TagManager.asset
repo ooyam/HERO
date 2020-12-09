@@ -14,6 +14,8 @@ TagManager:
   - White ball
   - Player Effect
   - Enemy3 Effect
+  - Wave
+  - WaveEffect
   layers:
   - Default
   - TransparentFX

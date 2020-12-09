@@ -5,7 +5,7 @@ using UnityEngine;
 public class Rescueship_controller : MonoBehaviour
 {
     //耐久値
-    private float HP = 151.0f;
+    public float HP = 151.0f;
     //接触検知用変数
     private bool Contact;
     //時間計算用変数
@@ -25,6 +25,12 @@ public class Rescueship_controller : MonoBehaviour
     private GameObject ScoreText;
     //HPゲージのゲームオブジェクトを入れる
     private GameObject HpGauge;
+    //Audioを入れる
+    private AudioSource Audio;
+    //ShipLightを入れる
+    public AudioClip LightSE;
+    //回復時の効果音を入れる
+    public AudioClip RepairSE;
 
     // Start is called before the first frame update
     void Start()
@@ -35,6 +41,8 @@ public class Rescueship_controller : MonoBehaviour
         ScoreText = GameObject.Find("score_text");
         //HPゲージゲームオブジェクトの取得
         HpGauge = GameObject.Find("Rescue ship HP");
+        //SEを取得
+        Audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -92,17 +100,37 @@ public class Rescueship_controller : MonoBehaviour
         if (other.gameObject.tag == "Red ball")
         {
             Contact = true;
-            this.HP -= 10f;
+            this.HP -= 10;
             GetComponent<Renderer>().material.color = new Color32(255, 0, 0, 255);
             //HPゲージを減らす
             HpGauge.GetComponent<RescueShipHP_Controller> ().Scale();
         }
+    }
+    public void RepairButton()
+    {
+        //RepairSEを出す
+        Audio.PlayOneShot(RepairSE);
+        //体力回復
+        if (this.HP <= 51)
+        {
+            this.HP += 100f;
+        }
+        else
+        {
+            float hp1 = this.HP + 100.0f;
+            float hp2 = hp1 - 151.0f;
+            this.HP = hp1 - hp2;
+        }
+        //HPゲージを増やす
+        HpGauge.GetComponent<RescueShipHP_Controller>().Scale();
     }
     IEnumerator WaitTimeCoroutine()
     {
         for (int i = 1; i <= 5; i++)
         {
             GetComponent<Renderer>().material.color = new Color32(255, 0, 0, 255);
+            //SEを出す
+            Audio.PlayOneShot(LightSE);
             yield return new WaitForSecondsRealtime(0.2f);
             GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 255);
             yield return new WaitForSecondsRealtime(0.2f);

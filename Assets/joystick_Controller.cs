@@ -93,7 +93,7 @@ public class joystick_Controller : MonoBehaviour
                 JoyHeadPos = JoyHeadObj.transform.position;
                 PlayerPos = PlayerTra.position;
                 //右移動
-                if (TapPos.x > JoyStickPos.x + 0.2 && TapPos.y < JoyStickPos.y + 0.3 && TapPos.y > JoyStickPos.y - 0.3)
+                if (TapPos.x > JoyStickPos.x + 0.2 && TapPos.y < JoyStickPos.y + 0.4 && TapPos.y > JoyStickPos.y - 0.4)
                 {
                     //体の向きを変える
                     Player.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -107,7 +107,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //左移動
-                if(TapPos.x < JoyStickPos.x - 0.2 && TapPos.y < JoyStickPos.y + 0.3 && TapPos.y > JoyStickPos.y - 0.3)
+                if(TapPos.x < JoyStickPos.x - 0.2 && TapPos.y < JoyStickPos.y + 0.4 && TapPos.y > JoyStickPos.y - 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 180, 0);
                     if (-this.WidthRange >= PlayerPos.x)
@@ -120,7 +120,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //上移動
-                if(TapPos.y > JoyStickPos.y + 0.2 && TapPos.x < JoyStickPos.x + 0.3 && TapPos.x > JoyStickPos.x - 0.3)
+                if(TapPos.y > JoyStickPos.y + 0.2 && TapPos.x < JoyStickPos.x + 0.4 && TapPos.x > JoyStickPos.x - 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 0, 90);
                     if (this.HeightRange <= PlayerPos.y)
@@ -133,7 +133,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //下移動
-                if(TapPos.y < JoyStickPos.y - 0.2 && TapPos.x < JoyStickPos.x + 0.3 && TapPos.x > JoyStickPos.x - 0.3)
+                if(TapPos.y < JoyStickPos.y - 0.2 && TapPos.x < JoyStickPos.x + 0.4 && TapPos.x > JoyStickPos.x - 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 0, -90);
                     if (-this.HeightRange >= PlayerPos.y)
@@ -146,7 +146,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //右上移動
-                if (TapPos.x >= JoyStickPos.x + 0.3 && TapPos.y >= JoyStickPos.y + 0.3)
+                if (TapPos.x >= JoyStickPos.x + 0.4 && TapPos.y >= JoyStickPos.y + 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 0, 45);
                     if (this.WidthRange <= PlayerPos.x && this.HeightRange <= PlayerPos.y)
@@ -167,7 +167,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //左上移動
-                if (TapPos.x <= JoyStickPos.x - 0.3 && TapPos.y >= JoyStickPos.y + 0.3)
+                if (TapPos.x <= JoyStickPos.x - 0.4 && TapPos.y >= JoyStickPos.y + 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 180, 45);
                     if (-this.WidthRange >= PlayerPos.x && this.HeightRange <= PlayerPos.y)
@@ -188,7 +188,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //右下移動
-                if (TapPos.x >= JoyStickPos.x + 0.3 && TapPos.y <= JoyStickPos.y - 0.3)
+                if (TapPos.x >= JoyStickPos.x + 0.4 && TapPos.y <= JoyStickPos.y - 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 0, -45);
                     if (this.WidthRange <= PlayerPos.x && -this.HeightRange >= PlayerPos.y)
@@ -209,7 +209,7 @@ public class joystick_Controller : MonoBehaviour
                     }
                 }
                 //左下移動
-                if (TapPos.x <= JoyStickPos.x - 0.3 && TapPos.y <= JoyStickPos.y - 0.3)
+                if (TapPos.x <= JoyStickPos.x - 0.4 && TapPos.y <= JoyStickPos.y - 0.4)
                 {
                     Player.transform.rotation = Quaternion.Euler(0, 180, -45);
                     if (-this.WidthRange >= PlayerPos.x && -this.HeightRange >= PlayerPos.y)

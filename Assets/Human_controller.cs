@@ -16,9 +16,17 @@ public class Human_controller : MonoBehaviour
     private GameObject ScoreText;
     //GameOver_Textのゲームオブジェクトを入れる
     private GameObject GameOverText;
+    //Rescue shipのゲームオブジェクトを入れる
+    private GameObject RescueShip;
+    //Rescue shipのTransformコンポーネントを入れる
+    private Transform ShipTra;
+    //Wave接触判定用変数
+    private bool Contact;
     //Playerアニメーション状態取得用変数
     private bool Catch;
     private bool CatchRun;
+    //SEを入れる
+    private AudioSource SE;
 
     // Start is called before the first frame update
     void Start()
@@ -31,7 +39,13 @@ public class Human_controller : MonoBehaviour
         ScoreText = GameObject.Find("score_text");
         //GameOver_Textゲームオブジェクトの取得
         GameOverText = GameObject.Find("GameOver_Text");
-        
+        //Rescue shipゲームオブジェクトの取得
+        RescueShip = GameObject.Find("Rescue ship");
+        //Rescue shipのコンポーネント取得
+        ShipTra = RescueShip.GetComponent<Transform>();
+        //SEを取得
+        SE = GetComponent<AudioSource>();
+
     }
 
     // Update is called once per frame
@@ -41,7 +55,7 @@ public class Human_controller : MonoBehaviour
         Catch = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
         CatchRun = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
 
-        if (CatchRun == false)
+        if (CatchRun == false && Contact == false)
         {
             //落下
             if (this.transform.position.y > -6)
@@ -72,7 +86,7 @@ public class Human_controller : MonoBehaviour
         }
 
         //CatchRun状態
-        if(CatchRun == true)
+        if(CatchRun == true && Contact == false)
         {
             this.transform.position = new Vector3(this.Player.transform.position.x - 0.1f, this.Player.transform.position.y + 0.1f, 0);
             this.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -81,12 +95,20 @@ public class Human_controller : MonoBehaviour
         {
             this.transform.rotation = Quaternion.Euler(0, 0, 90);
         }
+
+        //Wave接触によりShipへ直行
+        if(Contact == true)
+        {
+            this.transform.position = Vector3.Lerp(this.transform.position, ShipTra.position, 0.5f * Time.deltaTime);
+        }
     }
     IEnumerator WaitTimeCoroutine()
     {
         for (int i = 1; i <= 3; i++)
         {
             GetComponent<Renderer>().material.color = new Color32(255, 0, 0, 150);
+            //SEを出す
+            SE.Play();
             yield return new WaitForSecondsRealtime(0.2f);
             GetComponent<Renderer>().material.color = new Color32(255, 255, 255, 50);
             yield return new WaitForSecondsRealtime(0.3f);
@@ -101,6 +123,18 @@ public class Human_controller : MonoBehaviour
             ScoreText.GetComponent<score_text_Controller>().HumanScore();
             GameOverText.GetComponent<GameOver_Text_Controller>().HumanScore();
             Destroy(this.gameObject);
+        }
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        //Waveに接触した際はRescue shipに直行
+        if (obj.gameObject.tag == "Wave")
+        {
+            Contact = true;
+            //色を変え､パーティクルを呼び出す
+            GetComponent<Renderer>().material.color = new Color32(255, 255, 0, 100);
+            GetComponent<ParticleSystem>().Play();
         }
     }
 }

@@ -9,10 +9,21 @@ public class Player_Controller : MonoBehaviour
     private Animator myAnimator;
     //BoxColliderのコンポーネントを入れる
     private BoxCollider myColliderComponent;
-
+    //自身のAudioを入れる
+    private AudioSource Audio;
+    //Voiceを入れる
+    public AudioClip Voice;
+    //CatchSEを入れる
+    public AudioClip CatchSE;
+    //RecoverySEを入れる
+    public AudioClip RecoverySE;
+    //CatchSEを1回だけ鳴らすための変数
+    private bool CatchSeCount = false;
+    //ItemSeを入れる
+    public AudioClip ItemSe;
 
     //Player体力
-    private float HP = 100.0f;
+    public int HP = 100;
     //移動速度
     private float speed = 7.5f;
     //横方向の移動速度
@@ -57,6 +68,15 @@ public class Player_Controller : MonoBehaviour
     //Player_effectのインスタンス用変数
     private GameObject Effect;
 
+    //Wave_effectのゲームオブジェクトを入れる
+    public GameObject WaveEffect;
+    //Player_effectのインスタンス用変数
+    private GameObject Wave;
+    //Wave_effectのコンポーネントを入れる
+    private WaveEffect_Controller WaveCon;
+    //WaveEffectの有無確認用変数
+    private int WaveCounts;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -72,247 +92,267 @@ public class Player_Controller : MonoBehaviour
         myColliderComponent = GetComponent<BoxCollider>();
         //transformをキャッシュしておく
         _transform = transform;
+        //Audioを取得
+        Audio = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        //現在値/向き把握用
-        this.pos = _transform.position;
-        this.rot = _transform.localEulerAngles;
-        // アニメーション状態取得
-        SlideStart = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-start"));
-        Slide = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
-        SlideEnd = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-end"));
-        Catch = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
-        CatchRun = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
-        Death = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death"));
-        DeathEnd = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death-end"));
-        //PlayerEffectの有無
-        EffectCounts = GameObject.FindGameObjectsWithTag("Player Effect").Length;
+        if (Time.timeScale == 1)
+        {
+            //現在値/向き把握用
+            this.pos = _transform.position;
+            this.rot = _transform.localEulerAngles;
+            // アニメーション状態取得
+            SlideStart = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-start"));
+            Slide = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide"));
+            SlideEnd = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Slide-end"));
+            Catch = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
+            CatchRun = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
+            Death = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death"));
+            DeathEnd = myAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Death-end"));
+            //PlayerEffectの有無
+            EffectCounts = GameObject.FindGameObjectsWithTag("Player Effect").Length;
+            //WaveEffectの有無
+            WaveCounts = GameObject.FindGameObjectsWithTag("WaveEffect").Length;
 
-        // スペースキーを押したとき(攻撃動作)
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            AttackButtonDown();
-        }
-        //攻撃動作時常時稼働
-        if (SlideStart == true || Slide == true && SlideEnd == false)
-        {
-            //画面端で画面外側を向いている際は､攻撃時前進しない
-            //右端右向き
-            if (this.pos.x >= WidthRange && (this.transform.rotation == Quaternion.Euler(0, 0, 0) || this.transform.rotation == Quaternion.Euler(0, 0, 45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
+            // スペースキーを押したとき(攻撃動作)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
-                Slide_End();
+                AttackButtonDown();
             }
-            //左端左向き
-            else if (this.pos.x <= -WidthRange && (this.transform.rotation == Quaternion.Euler(0, 180, 0) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 180, -45)))
+            //攻撃動作時常時稼働
+            if (SlideStart == true || Slide == true && SlideEnd == false)
             {
-                Slide_End();
+                //画面端で画面外側を向いている際は､攻撃時前進しない
+                //右端右向き
+                if (this.pos.x >= WidthRange && (this.transform.rotation == Quaternion.Euler(0, 0, 0) || this.transform.rotation == Quaternion.Euler(0, 0, 45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
+                {
+                    Slide_End();
+                }
+                //左端左向き
+                else if (this.pos.x <= -WidthRange && (this.transform.rotation == Quaternion.Euler(0, 180, 0) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 180, -45)))
+                {
+                    Slide_End();
+                }
+                //上端上向き
+                else if (this.pos.y >= HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, 90) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 0, 45)))
+                {
+                    Slide_End();
+                }
+                //下端下向き
+                else if (this.pos.y <= -HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, -90) || this.transform.rotation == Quaternion.Euler(0, 180, -45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
+                {
+                    Slide_End();
+                }
+                //攻撃時前進する
+                else
+                {
+                    this.AttakMove = 1;
+                }
             }
-            //上端上向き
-            else if (this.pos.y >= HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, 90) || this.transform.rotation == Quaternion.Euler(0, 180, 45) || this.transform.rotation == Quaternion.Euler(0, 0, 45)))
+            //攻撃時前進
+            if (this.AttakMove == 1 && (SlideStart == true || Slide == true))
             {
-                Slide_End();
-            }
-            //下端下向き
-            else if (this.pos.y <= -HeightRange && (this.transform.rotation == Quaternion.Euler(0, 0, -90) || this.transform.rotation == Quaternion.Euler(0, 180, -45) || this.transform.rotation == Quaternion.Euler(0, 0, -45)))
-            {
-                Slide_End();
-            }
-            //攻撃時前進する
-            else
-            {
-                this.AttakMove = 1;
-            }
-        }
-        //攻撃時前進
-        if (this.AttakMove == 1 && (SlideStart == true || Slide == true))
-        {
-            transform.Translate(Attackspeed * Time.deltaTime, 0, 0);
-            //エフェクト移動
-            if (EffectCounts >= 1)
-            {
-                Effect.transform.Translate(Attackspeed * Time.deltaTime, 0, 0);
-            }
-            delta += Time.deltaTime;
-            if (delta >= 0.25f)
-            {
-                delta = 0;
-                this.AttakMove = 0;
-                this.myAnimator.SetTrigger("Slide-end_trigger");
-                //当たり判定を元に戻す
-                myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
-                myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
+                transform.Translate(Attackspeed * Time.deltaTime, 0, 0);
+                //エフェクト移動
                 if (EffectCounts >= 1)
                 {
-                    //エフェクトを破壊する
-                    Effect.GetComponent<Player_effect_Controller>().DestroyObj();
+                    Effect.transform.position = new Vector3(this.pos.x - 0.4f, this.pos.y - 0.67f, -5f);
+                    Effect.transform.rotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
+                }
+                delta += Time.deltaTime;
+                if (delta >= 0.25f)
+                {
+                    delta = 0;
+                    this.AttakMove = 0;
+                    this.myAnimator.SetTrigger("Slide-end_trigger");
+                    //当たり判定を元に戻す
+                    myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
+                    myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
                 }
             }
-        }
 
-        //Human救助動作
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            CatchButtonDown();
-        }
-        //Humanを離す
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            ReleaseButtonDown();
-        }
+            //Human救助動作
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                CatchButtonDown();
+            }
+            //Humanを離す
+            if (Input.GetKeyDown(KeyCode.V))
+            {
+                ReleaseButtonDown();
+            }
 
-        //CatchRun中は移動速度減
-        this.speed = CatchRun ? 5.0f : speed;
+            //CatchRun中は移動速度減
+            this.speed = CatchRun ? 5.0f : speed;
 
-        //playerの移動(攻撃動作時・PlayerDeth時は移動不可にする)
-        if (SlideStart == false && Slide == false && SlideEnd == false && Death == false && DeathEnd == false)
-        {
-            //右上移動
-            if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.UpArrow))
+            //playerの移動(攻撃動作時・PlayerDeth時は移動不可にする)
+            if (SlideStart == false && Slide == false && SlideEnd == false && Death == false && DeathEnd == false)
             {
-                //体の向きを変える
-                transform.rotation = Quaternion.Euler(0, 0, 45);
-                if (this.WidthRange <= pos.x && this.HeightRange <= pos.y)
+                //右上移動
+                if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.UpArrow))
                 {
-                    DontRun();
+                    //体の向きを変える
+                    transform.rotation = Quaternion.Euler(0, 0, 45);
+                    if (this.WidthRange <= pos.x && this.HeightRange <= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else if (this.WidthRange <= pos.x)
+                    {
+                        UpMove();
+                    }
+                    else if (this.HeightRange <= pos.y)
+                    {
+                        RightMove();
+                    }
+                    else
+                    {
+                        RightUpMove();
+                    }
                 }
-                else if (this.WidthRange <= pos.x)
+                //左上移動
+                else if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.UpArrow))
                 {
-                    UpMove();
+                    transform.rotation = Quaternion.Euler(0, 180, 45);
+                    if (-this.WidthRange >= pos.x && this.HeightRange <= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else if (-this.WidthRange >= pos.x)
+                    {
+                        UpMove();
+                    }
+                    else if (this.HeightRange <= pos.y)
+                    {
+                        LeftMove();
+                    }
+                    else
+                    {
+                        LeftUpMove();
+                    }
                 }
-                else if (this.HeightRange <= pos.y)
+                //右下移動
+                else if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.DownArrow))
                 {
-                    RightMove();
+                    transform.rotation = Quaternion.Euler(0, 0, -45);
+                    if (this.WidthRange <= pos.x && -this.HeightRange >= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else if (this.WidthRange <= pos.x)
+                    {
+                        DownMove();
+                    }
+                    else if (-this.HeightRange >= pos.y)
+                    {
+                        RightMove();
+                    }
+                    else
+                    {
+                        RightDownMove();
+                    }
                 }
-                else
+                //左下移動
+                else if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.DownArrow))
                 {
-                    RightUpMove();
+                    transform.rotation = Quaternion.Euler(0, 180, -45);
+                    if (-this.WidthRange >= pos.x && -this.HeightRange >= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else if (-this.WidthRange >= pos.x)
+                    {
+                        DownMove();
+                    }
+                    else if (-this.HeightRange >= pos.y)
+                    {
+                        LeftMove();
+                    }
+                    else
+                    {
+                        LeftDownMove();
+                    }
+                }
+                //右移動
+                else if (Input.GetKey(KeyCode.RightArrow))
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, 0);
+                    if (this.WidthRange <= pos.x)
+                    {
+                        DontRun();
+                    }
+                    else
+                    {
+                        RightMove();
+                    }
+                }
+                //左移動
+                else if (Input.GetKey(KeyCode.LeftArrow))
+                {
+                    transform.rotation = Quaternion.Euler(0, 180, 0);
+                    if (-this.WidthRange >= pos.x)
+                    {
+                        DontRun();
+                    }
+                    else
+                    {
+                        LeftMove();
+                    }
+                }
+                //上移動
+                else if (Input.GetKey(KeyCode.UpArrow))
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, 90);
+                    if (this.HeightRange <= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else
+                    {
+                        UpMove();
+                    }
+                }
+                //下移動
+                else if (Input.GetKey(KeyCode.DownArrow))
+                {
+                    transform.rotation = Quaternion.Euler(0, 0, -90);
+                    if (-this.HeightRange >= pos.y)
+                    {
+                        DontRun();
+                    }
+                    else
+                    {
+                        DownMove();
+                    }
                 }
             }
-            //左上移動
-            else if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.UpArrow))
+            //速度を与えて移動させる
+            this.transform.Translate(inputVelocityX * Time.deltaTime, inputVelocityY * Time.deltaTime, 0, Space.World);
+            //Runをやめる
+            if (Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
             {
-                transform.rotation = Quaternion.Euler(0, 180, 45);
-                if (-this.WidthRange >= pos.x && this.HeightRange <= pos.y)
+                DontRun();
+            }
+            //WaveEffectをPlayerに追従させる
+            if(WaveCounts >= 1)
+            {
+                Wave.transform.position = new Vector3(this.pos.x + 0.3f, this.pos.y - 0.3f, 1);
+                delta += Time.deltaTime;
+                if(delta >= 15f)
                 {
-                    DontRun();
-                }
-                else if (-this.WidthRange >= pos.x)
-                {
-                    UpMove();
-                }
-                else if (this.HeightRange <= pos.y)
-                {
-                    LeftMove();
-                }
-                else
-                {
-                    LeftUpMove();
+                    //ウェーブエフェクトのコンポーネント取得BGM切り替え
+                    WaveCon.EndEffect();
+                    delta = 0;
                 }
             }
-            //右下移動
-            else if (Input.GetKey(KeyCode.RightArrow) && Input.GetKey(KeyCode.DownArrow))
+            //CatchSeCountをリセットする
+            if (Catch == false)
             {
-                transform.rotation = Quaternion.Euler(0, 0, -45);
-                if (this.WidthRange <= pos.x && -this.HeightRange >= pos.y)
-                {
-                    DontRun();
-                }
-                else if (this.WidthRange <= pos.x)
-                {
-                    DownMove();
-                }
-                else if (-this.HeightRange >= pos.y)
-                {
-                    RightMove();
-                }
-                else
-                {
-                    RightDownMove();
-                }
+                CatchSeCount = false;
             }
-            //左下移動
-            else if (Input.GetKey(KeyCode.LeftArrow) && Input.GetKey(KeyCode.DownArrow))
-            {
-                transform.rotation = Quaternion.Euler(0, 180, -45);
-                if (-this.WidthRange >= pos.x && -this.HeightRange >= pos.y)
-                {
-                    DontRun();
-                }
-                else if (-this.WidthRange >= pos.x)
-                {
-                    DownMove();
-                }
-                else if (-this.HeightRange >= pos.y)
-                {
-                    LeftMove();
-                }
-                else
-                {
-                    LeftDownMove();
-                }
-            }
-            //右移動
-            else if (Input.GetKey(KeyCode.RightArrow))
-            {
-                transform.rotation = Quaternion.Euler(0, 0, 0);
-                if (this.WidthRange <= pos.x)
-                {
-                    DontRun();
-                }
-                else
-                {
-                    RightMove();
-                }
-            }
-            //左移動
-            else if (Input.GetKey(KeyCode.LeftArrow))
-            {
-                transform.rotation = Quaternion.Euler(0, 180, 0);
-                if (-this.WidthRange >= pos.x)
-                {
-                    DontRun();
-                }
-                else
-                {
-                    LeftMove();
-                }
-            }
-            //上移動
-            else if (Input.GetKey(KeyCode.UpArrow))
-            {
-                transform.rotation = Quaternion.Euler(0, 0, 90);
-                if (this.HeightRange <= pos.y)
-                {
-                    DontRun();
-                }
-                else
-                {
-                    UpMove();
-                }
-            }
-            //下移動
-            else if (Input.GetKey(KeyCode.DownArrow))
-            {
-                transform.rotation = Quaternion.Euler(0, 0, -90);
-                if (-this.HeightRange >= pos.y)
-                {
-                    DontRun();
-                }
-                else
-                {
-                    DownMove();
-                }
-            }
-        }
-        //速度を与えて移動させる
-        this.transform.Translate(inputVelocityX * Time.deltaTime, inputVelocityY * Time.deltaTime, 0, Space.World);
-        //Runをやめる
-        if (Input.GetKeyUp(KeyCode.DownArrow) || Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.LeftArrow) || Input.GetKeyUp(KeyCode.RightArrow))
-        {
-            DontRun();
         }
     }
     void Slide_End()
@@ -322,12 +362,6 @@ public class Player_Controller : MonoBehaviour
         //当たり判定を元に戻す
         myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
         myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
-        if (EffectCounts >= 1)
-        {
-            //エフェクトを破壊する
-            Effect.GetComponent<Player_effect_Controller>().DestroyObj();
-        }
-
     }
 
     void OnTriggerStay(Collider other)
@@ -337,10 +371,18 @@ public class Player_Controller : MonoBehaviour
         {
             this.myAnimator.SetBool("Catch-Run_bool", true);
         }
+        //CatchRunがtrueになった時､1度のみSEを鳴らす
+        if (Catch == true && CatchSeCount == false)
+        {
+            Audio.PlayOneShot(CatchSE);
+            CatchSeCount = true;
+        }
         //ダメージを受ける
         if ((Catch == true || CatchRun == true) && (other.gameObject.tag == "White ball" || other.gameObject.tag == "Red ball"))
         {
-            this.HP -= 10f;
+            this.HP -= 10;
+            //声を出す
+            Audio.PlayOneShot(Voice);
             //Player HPを減らす
             PlayerHp.GetComponent<Plyaer_HP_Controller>().Scale();
             this.myAnimator.SetTrigger("Death_trigger");
@@ -355,6 +397,40 @@ public class Player_Controller : MonoBehaviour
                 ScoreText.GetComponent<score_text_Controller>().GameOverJudge();
             }
         }
+    }
+    public void RecoveryButton()
+    {
+        //RecoverySEを出す
+        Audio.PlayOneShot(RecoverySE);
+        //体力回復
+        if (this.HP <= 50)
+        {
+            this.HP += 50;
+        }
+        else
+        {
+            int hp1 = this.HP + 50;
+            int hp2 = hp1 - 100;
+            this.HP = hp1 - hp2;
+        }
+        //Player HPを増やす
+        PlayerHp.GetComponent<Plyaer_HP_Controller>().Scale();
+    }
+    public void WaveButton()
+    {
+        if (WaveCounts >= 1)
+        {
+            //ウェーブエフェクトの重複を防ぐ
+            WaveCon.Cancel();
+        }
+        //ウェーブエフェクトを呼び出す
+        Wave = Instantiate(WaveEffect);
+        Wave.transform.position = new Vector3(this.pos.x, this.pos.y, -5.1f);
+        //ウェーブエフェクトのコンポーネント取得
+        WaveCon = Wave.GetComponent<WaveEffect_Controller>();
+        //BGM切り替え
+        WaveCon.StartEffect();
+        delta = 0;
     }
     public void AttackButtonDown()
     {
@@ -507,5 +583,9 @@ public class Player_Controller : MonoBehaviour
         //移動速度を元に戻す
         inputVelocityX = 0;
         inputVelocityY = 0;
+    }
+    public void ItemSE()
+    {
+        this.Audio.PlayOneShot(ItemSe);
     }
 }

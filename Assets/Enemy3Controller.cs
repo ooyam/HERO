@@ -142,7 +142,7 @@ public class Enemy3Controller : MonoBehaviour
             {
                 human = Instantiate(Human4);
             }
-            human.transform.position = new Vector2(this.transform.position.x, this.transform.position.y);
+            human.transform.position = new Vector3(this.transform.position.x, this.transform.position.y,0);
             //ポイントの加算(score_textの呼び出し)
             ScoreText.GetComponent<score_text_Controller>().EnemyScore();
             GameOverText.GetComponent<GameOver_Text_Controller>().Enemy3Score();
@@ -162,5 +162,14 @@ public class Enemy3Controller : MonoBehaviour
     {
         yield return new WaitForSecondsRealtime(1.3f);
         Time.timeScale = 1;
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        //Waveに接触した際は即破壊
+        if (obj.gameObject.tag == "Wave" && this.transform.position.x < 9)
+        {
+            Contact = true;
+        }
     }
 }
