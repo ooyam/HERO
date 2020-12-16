@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 6544301166659314111}
   - component: {fileID: -9141295774692417046}
   - component: {fileID: 8204799515106995424}
+  - component: {fileID: 7482542167939470779}
   m_Layer: 0
   m_Name: Item_Repair
   m_TagString: Untagged
@@ -125,6 +126,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 206cde9f6cf1e914e9b688715caa54d8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!143 &7482542167939470779
+CharacterController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1244000870825392505}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Height: 1
+  m_Radius: 0.5
+  m_SlopeLimit: 45
+  m_StepOffset: 0.3
+  m_SkinWidth: 0.08
+  m_MinMoveDistance: 0.001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &2286983157654382693
 GameObject:
   m_ObjectHideFlags: 0

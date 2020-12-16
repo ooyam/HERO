@@ -177,7 +177,7 @@ public class Player_Controller : MonoBehaviour
                 {
                     delta = 0;
                     this.AttakMove = 0;
-                    this.myAnimator.SetTrigger("Slide-end_trigger");
+                    this.myAnimator.Play("Slide-end",0,0.0f);
                     //当たり判定を元に戻す
                     myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
                     myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
@@ -370,15 +370,6 @@ public class Player_Controller : MonoBehaviour
             }
         }
     }
-    void Slide_End()
-    {
-        this.AttakMove = 0;
-        this.myAnimator.SetTrigger("Slide-end_trigger");
-        //当たり判定を元に戻す
-        myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
-        myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
-    }
-
     public void RecoveryButton()
     {
         //RecoverySEを出す
@@ -418,36 +409,46 @@ public class Player_Controller : MonoBehaviour
             //自身のコンポーネントから当たり判定を変更する
             myColliderComponent.center = new Vector3(-1.7f, -1f, 0f);
             myColliderComponent.size = new Vector3(5.5f, 4f, 50f);
-            // Animatorコンポーネントを取得し、"Slide-start_trigger""Slide_trigger"をtrueにする
-            this.myAnimator.Play("Slide-start", 0, 0.0f);
-            this.myAnimator.Play("Slide", 0, 0.0f);
+            //CatchRun中の場合は中断する
+            if(CatchRun == true)
+            {
+                // Animatorコンポーネントを取得し、"Slide-start_trigger""Slide_trigger"をtrueにする
+                this.myAnimator.Play("Slide-start", 0, 0.0f);
+                this.myAnimator.Play("Slide", 0, 0.0f);
+            }
+            else
+            {
+                this.myAnimator.Play("Slide-start", 0, 0.0f);
+                this.myAnimator.Play("Slide", 0, 0.0f);
+            }
             //エフェクトを出力する
             Effect = Instantiate(PlayerEffect);
             Effect.transform.position = new Vector3(this.pos.x - 0.4f, this.pos.y - 0.67f, -5f);
             Effect.transform.rotation = Quaternion.Euler(this.rot.x, this.rot.y, this.rot.z);
         }
     }
+    void Slide_End()
+    {
+        this.AttakMove = 0;
+        this.myAnimator.Play("Slide-end",0,0.0f);
+        //当たり判定を元に戻す
+        myColliderComponent.center = new Vector3(0.3f, -0.3f, 0f);
+        myColliderComponent.size = new Vector3(1.6f, 1.8f, 20f);
+    }
     public void CatchButtonDown()
     {
-        // Animatorコンポーネントを取得し、"Catch_trigger"をtrueにする
-        this.myAnimator.SetTrigger("Catch_trigger");
-    }
-    public void ReleaseButtonDown()
-    {
-        if (CatchRun == true)
+        if (Catch == false)
         {
             // Animatorコンポーネントを取得し、"Catch_trigger"をtrueにする
-            this.myAnimator.SetTrigger("Lose_trigger");
-            this.myAnimator.SetBool("Catch-Run_bool", false);
+            this.myAnimator.Play("Catch", 0, 0.0f);
         }
-
     }
     void OnTriggerStay(Collider other)
     {
         //Humanをつかむ
         if (other.gameObject.tag == "Human" && Catch == true)
         {
-            this.myAnimator.SetBool("Catch-Run_bool", true);
+            this.myAnimator.Play("Catch-Run", 0, 0.0f);
         }
         //CatchRunがtrueになった時､1度のみSEを鳴らす
         if (Catch == true && CatchSeCount == false && other.gameObject.tag == "Human")
@@ -456,7 +457,7 @@ public class Player_Controller : MonoBehaviour
             CatchSeCount = true;
         }
         //ダメージを受ける
-        if ((Catch == true || CatchRun == true) && (other.gameObject.tag == "White ball" || other.gameObject.tag == "Red ball"))
+        if ((Catch == true || CatchRun == true) && SlideStart == false && Slide == false && (other.gameObject.tag == "White ball" || other.gameObject.tag == "Red ball"))
         {
             this.HP -= 10;
             if(HP == 30)
@@ -471,7 +472,7 @@ public class Player_Controller : MonoBehaviour
             }
             //Player HPを減らす
             PlayerHpScr.Scale();
-            this.myAnimator.SetTrigger("Death_trigger");
+            this.myAnimator.Play("Death",0,0.0f);
             this._transform.rotation = Quaternion.Euler(0, 0, 0);
             //HP0でゲームオーバー
             if (this.HP <= 0)
@@ -482,6 +483,14 @@ public class Player_Controller : MonoBehaviour
                 //score表示を消す
                 ScoreTextScr.GameOverJudge();
             }
+        }
+    }
+    public void ReleaseButtonDown()
+    {
+        if (CatchRun == true)
+        {
+            // Animatorコンポーネントを取得し、"Catch-Run_bool"をFalseにする
+            this.myAnimator.SetTrigger("Lose_trigger");
         }
     }
     public void RightMove()

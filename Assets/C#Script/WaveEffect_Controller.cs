@@ -17,6 +17,7 @@ public class WaveEffect_Controller : MonoBehaviour
     private GameOver_Text_Controller GameOverScr;
     //GameOverの判断用変数
     private bool GameOver;
+    private bool GameOverText;
     //Rescue shipを入れる
     private GameObject Ship;
     //Rescue shipのスクリプトを入れる
@@ -49,6 +50,7 @@ public class WaveEffect_Controller : MonoBehaviour
     {
         //GameOverかどうか監視、Trueの場合はBGM中止
         GameOver = GameOverScr.GameOver;
+        GameOverText = GameOverScr._Text1;
         //Rescue shipのHPを監視、0以下の場合はBGM中止
         ShipHP = ShipScr.HP;
         //BGMを再開するか監視、Trueの場合はBGM再開
@@ -60,6 +62,10 @@ public class WaveEffect_Controller : MonoBehaviour
         if (WaveRestart == true)
         {
             Restart();
+        }
+        if(GameOverText == true && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        {
+            Destroy(this.gameObject);
         }
     }
     public void StartEffect()
@@ -88,10 +94,10 @@ public class WaveEffect_Controller : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.2f);
             if (i <= 0)
             {
-                //通常用のBGMを再開
-                BGMCon.BGMStart();
                 //自身を破壊
                 Destroy(this.gameObject);
+                //通常用のBGMを再開
+                BGMCon.BGMStart();
             }
         }
     }
@@ -107,7 +113,7 @@ public class WaveEffect_Controller : MonoBehaviour
     }
     void Restart()
     {
-        //BGM中断
+        //BGM再開
         this.Audio.volume = 0.4f;
     }
 }

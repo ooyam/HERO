@@ -18,6 +18,8 @@ public class ItemRecovery_Controller : MonoBehaviour
     private Player_Controller PlayerScr;
     //時間計算
     private float delta;
+    //WaveContact用変数
+    private bool WaveContact;
 
     // Start is called before the first frame update
     void Start()
@@ -51,7 +53,7 @@ public class ItemRecovery_Controller : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Player" && delta >= 0.5f)
+        if ((other.gameObject.tag == "Player" || WaveContact == true) && delta >= 0.5f)
         {
             //ItemButtonを押せる状態にする
             RecoveryTra.anchoredPosition = new Vector2 ( 80, -35);
@@ -59,6 +61,15 @@ public class ItemRecovery_Controller : MonoBehaviour
             Destroy(this.gameObject);
             //SEを呼ぶ
             PlayerScr.ItemSE();
+        }
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        //Waveに接触した際はRescue shipに直行
+        if (obj.gameObject.tag == "Wave")
+        {
+            WaveContact = true;
         }
     }
 }

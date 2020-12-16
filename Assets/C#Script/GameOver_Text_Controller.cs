@@ -17,7 +17,7 @@ public class GameOver_Text_Controller : MonoBehaviour
     private bool Enemy3Escape;
     //text表示中の確認
     private bool _Text;
-    private bool _Text1;
+    public bool _Text1;
     //Componentの取得
     private Component myComponent;
     //Human/Enemy1/Enemy2/Enemy3を救出/破壊した総数
@@ -40,8 +40,11 @@ public class GameOver_Text_Controller : MonoBehaviour
     public GameObject enemy3;
     //Humanを入れる
     public GameObject Human;
-    //BG_0を入れる
-    public GameObject BG_0;
+    //BGのTransformを入れる
+    private Transform BG_1;
+    private Transform BG_2;
+    private Transform BG_3;
+    private Transform BG_4;
     //RescueShipを入れる
     public GameObject Ship;
     private Transform ShipHP;
@@ -102,6 +105,11 @@ public class GameOver_Text_Controller : MonoBehaviour
         ShipHP = GameObject.Find("Rescue ship MaxHP").GetComponent<Transform>();
         //ScoreDisplayのオブジェクト/スクリプトを入れる
         ScoreDisplayScr = ScoreDisplay.GetComponent<ScoreDisplay_Controller>();
+        //BGのTransformを取得
+        BG_1 = GameObject.Find("BG_1").GetComponent<Transform>();
+        BG_2 = GameObject.Find("BG_2").GetComponent<Transform>();
+        BG_3 = GameObject.Find("BG_3").GetComponent<Transform>();
+        BG_4 = GameObject.Find("BG_4").GetComponent<Transform>();
 
         //AudioSourceを取得
         Audio = GetComponent<AudioSource>();
@@ -169,9 +177,11 @@ public class GameOver_Text_Controller : MonoBehaviour
             //GameOver要因の表示
             if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 0 && _Text1 == true)
             {
-                //BG_0オブジェクトの出力
-                GameObject BGObj = Instantiate(BG_0);
-                BGObj.transform.position = new Vector3(0, 0, -6f);
+                //BG_1オブジェクトを前に出す
+                BG_1.position = new Vector3(0, 0, -6f);
+                BG_2.position = new Vector3(0, 0, -6f);
+                BG_3.position = new Vector3(0, 0, -6f);
+                BG_4.position = new Vector3(0, 0, -6f);
                 //フォントサイズ変更
                 _text.fontSize = 50;
                 if (ShipDeth == true)

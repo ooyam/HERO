@@ -36,7 +36,7 @@ public class ScoreDisplay_Controller : MonoBehaviour
         this.FinalLevel = GameOverScr.Level;
         this.FinalScore = GameOverScr.RustScore;
         //text内容の更新
-        PointText.text = "10p  ×  " + this.Enemy1Total + "体\n10p  ×  " + this.Enemy2Total + "体\n20p ×  " + this.Enemy3Total + "体\n\n30p ×  " + this.HumanTotal + "人";
+        PointText.text = "10p  ×  " + this.Enemy1Total + "体\n10p  ×  " + this.Enemy3Total + "体\n20p ×  " + this.Enemy2Total + "体\n\n30p ×  " + this.HumanTotal + "人";
         BonusText.text = "Bonus : Level " + this.FinalLevel + "  ×  500p\n\nScore : " + (this.FinalScore + (this.FinalLevel * 500));
     }
 

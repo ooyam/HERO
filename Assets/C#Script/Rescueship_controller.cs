@@ -70,9 +70,6 @@ public class Rescueship_controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //WaveEffectの有無
-        WaveCounts = GameObject.FindGameObjectsWithTag("WaveEffect").Length;
-
         if (this.Contact == true && this.HP >= 50)
         {
             this.delta += Time.deltaTime;
@@ -123,6 +120,10 @@ public class Rescueship_controller : MonoBehaviour
             //BGMの停止
             BGMScr.BGMStop();
             stop = true;
+        }
+        //WaveRestartをリセット
+        if (WaveRestart == true)
+        {
             WaveRestart = false;
         }
         //stopリセット
@@ -131,6 +132,8 @@ public class Rescueship_controller : MonoBehaviour
             stop = false;
             //時間の再開
             Time.timeScale = 1;
+            //WaveEffectの有無
+            WaveCounts = GameObject.FindGameObjectsWithTag("WaveEffect").Length;
             if (WaveCounts >= 1)
             {
                 //WaveBGMの再開

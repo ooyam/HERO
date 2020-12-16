@@ -6,6 +6,7 @@ public class EnemyGenerator : MonoBehaviour
 {
     //敵キャラを入れる
     public GameObject enemy1Prefab;
+    public GameObject enemy1_2Prefab;
     public GameObject enemy2Prefab;
     public GameObject enemy3Prefab;
     //Enemy2位置把握用変数
@@ -61,9 +62,19 @@ public class EnemyGenerator : MonoBehaviour
                 for (int i = -1; i <= 1; i++)
                 {
                     //生成場所のランダム指定
-                    float Enemy1pos = Random.Range(-2.14f, 2.14f);
-                    GameObject Enemy1obj = Instantiate(enemy1Prefab);
-                    Enemy1obj.transform.position = new Vector2(10, Enemy1pos);
+                    float Enemy1pos = Random.Range(-2f, 2f);
+                    int random = Random.Range(-1, 3);
+                    //レベル6より画面上下からも出現するようにする
+                    if (this.Level >= 1.20 && (random == 1 || random == -1))
+                    {
+                        GameObject Enemy1obj = Instantiate(enemy1_2Prefab);
+                        Enemy1obj.transform.position = new Vector2(Enemy1pos * 2, 6.5f * random);
+                    }
+                    else
+                    {
+                        GameObject Enemy1obj = Instantiate(enemy1Prefab);
+                        Enemy1obj.transform.position = new Vector2(10, Enemy1pos);
+                    }
                 }
             }
             else
@@ -75,9 +86,8 @@ public class EnemyGenerator : MonoBehaviour
                 Enemy1obj.transform.position = new Vector2(10, Enemy1pos);
             }
         }
-
         //画面内に敵2が1体以下の状態で､5秒以上経過したとき(Level==1の場合)
-        if (Enemy2counts < Enemy2Random && this.delta[1] > Seconds[1])
+            if (Enemy2counts < Enemy2Random && this.delta[1] > Seconds[1])
         {
             this.delta[1] = 0;
 

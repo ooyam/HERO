@@ -17,6 +17,8 @@ public class BGM_Controller : MonoBehaviour
     private GameOver_Text_Controller GameOverScr;
     //GameOverの判断用変数
     private bool GameOver;
+    //WaveEffectの有無確認用変数
+    private int WaveCounts;
 
     // Start is called before the first frame update
     void Start()
@@ -32,16 +34,18 @@ public class BGM_Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //WaveEffectの有無
+        WaveCounts = GameObject.FindGameObjectsWithTag("WaveEffect").Length;
         //GameOverかどうか監視、Trueの場合BGM中止
         GameOver = GameOverScr.GameOver;
-        if (GameOver == true)
+        if ((GameOver == true || WaveCounts >= 1)&& this.Audio.volume != 0f)
         {
             BGMStop();
         }
     }
     public void BGMStop()
     {
-        this.Audio.volume = 0;
+            this.Audio.volume = 0;
     }
     public void BGMPlay()
     {
@@ -55,7 +59,7 @@ public class BGM_Controller : MonoBehaviour
     IEnumerator VolumeCoroutine()
     {
         //徐々にVolumeを上げる
-        for (int i = 10; i >= 0; i--)
+        for (int i = 10; i >= 1; i--)
         {
             this.Audio.volume += 0.03f;
             yield return new WaitForSecondsRealtime(0.1f);

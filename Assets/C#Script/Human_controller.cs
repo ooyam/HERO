@@ -35,6 +35,14 @@ public class Human_controller : MonoBehaviour
     //AudioSourceのキャッシュ
     private AudioSource Audio;
     public AudioClip LightSE;
+    //GameOver監視用変数
+    private bool GameOver;
+    //Playerにつかまれたかどうかの判断
+    private bool PlayerCatch;
+    //時間計算用
+    private float delta;
+    //救出を一度で止めるための変数
+    private bool Rescue;
 
     // Start is called before the first frame update
     void Start()
@@ -68,8 +76,10 @@ public class Human_controller : MonoBehaviour
         // Playerアニメーションの状態取得
         Catch = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
         CatchRun = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
+        //GameOver状態の監視
+        GameOver = GameOverTextScr._Text1;
 
-        if (CatchRun == false && Contact == false)
+        if (PlayerCatch == false && Contact == false)
         {
             //落下
             if (this._transform.position.y > -6)
@@ -100,20 +110,30 @@ public class Human_controller : MonoBehaviour
         }
 
         //CatchRun状態
-        if(CatchRun == true && Contact == false)
+        if(PlayerCatch == true)
         {
+            //ぎりぎりでキャッチした場合すぐ離にしていたため0.1秒遅延しCatchRun状態への移還を待つもの
+            delta += Time.deltaTime;
             this._transform.position = new Vector3(this.PlayerTra.position.x - 0.1f, this.PlayerTra.position.y + 0.1f, 0);
             this._transform.rotation = Quaternion.Euler(0, 0, 0);
-        }
-        else
-        {
-            this._transform.rotation = Quaternion.Euler(0, 0, 90);
+            if (Catch == false && CatchRun == false && delta >= 0.1f)
+            {
+                //CatchRunリセット
+                PlayerCatch = false;
+                this._transform.rotation = Quaternion.Euler(0, 0, 90);
+                delta = 0;
+            }
         }
 
         //Wave接触によりShipへ直行
-        if(Contact == true)
+        if (Contact == true)
         {
             this._transform.position = Vector3.Lerp(this._transform.position, ShipTra, 0.5f * Time.deltaTime);
+        }
+        //GameOver時は破壊
+        if(GameOver == true && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        {
+            Destroy(this.gameObject);
         }
     }
     IEnumerator WaitTimeCoroutine()
@@ -131,12 +151,17 @@ public class Human_controller : MonoBehaviour
     }
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.tag == "Rescue ship" && CatchRun == false)
+        if (other.gameObject.tag == "Rescue ship" && CatchRun == false && Rescue == false)
         {
+            Rescue = true;
+            Destroy(this.gameObject);
             //ポイントの加算(score_textの呼び出し)
             ScoreTextScr.HumanScore();
             GameOverTextScr.HumanScore();
-            Destroy(this.gameObject);
+        }
+        if (other.gameObject.tag == "Player" && Catch == true)
+        {
+            PlayerCatch = true;
         }
     }
     //パーティクル当たり判定

@@ -18,6 +18,8 @@ public class ItemWave_Controller : MonoBehaviour
     private GameObject Player;
     //Playerのスクリプトを入れる
     private Player_Controller PlayerScr;
+    //WaveContact用変数
+    private bool WaveContact;
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +52,7 @@ public class ItemWave_Controller : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.tag == "Player" && delta >= 0.5f)
+        if ((other.gameObject.tag == "Player" || WaveContact == true) && delta >= 0.5f)
         {
             //SEを呼ぶ
             PlayerScr.ItemSE();
@@ -58,6 +60,15 @@ public class ItemWave_Controller : MonoBehaviour
             WaveTra.anchoredPosition = new Vector2(0, -35);
             //自身を破壊
             Destroy(this.gameObject);
+        }
+    }
+    //パーティクル当たり判定
+    void OnParticleCollision(GameObject obj)
+    {
+        //Waveに接触した際はRescue shipに直行
+        if (obj.gameObject.tag == "Wave")
+        {
+            WaveContact = true;
         }
     }
 }
