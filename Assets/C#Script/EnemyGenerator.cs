@@ -22,7 +22,7 @@ public class EnemyGenerator : MonoBehaviour
     //Enemy出現確率
     private float[] Probability = { 10f, 2f, 3f };
     // 時間計測用の変数
-    private float[] delta = { 0, 0, 0, 0 };
+    public float[] delta = { 0, 0, 0, 0 };
     //Enemy2ランダム用変数
     private int Enemy2Random = 2;
 

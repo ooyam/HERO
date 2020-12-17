@@ -15,9 +15,10 @@ public class GameOver_Text_Controller : MonoBehaviour
     private bool ShipDeth;
     private bool HumanDeth;
     private bool Enemy3Escape;
-    //text表示中の確認
-    private bool _Text;
-    public bool _Text1;
+    //text表示内容更新用
+    public　int _Text;
+    //BGTransform取得重複防止
+    private bool GetBG;
     //Componentの取得
     private Component myComponent;
     //Human/Enemy1/Enemy2/Enemy3を救出/破壊した総数
@@ -41,10 +42,7 @@ public class GameOver_Text_Controller : MonoBehaviour
     //Humanを入れる
     public GameObject Human;
     //BGのTransformを入れる
-    private Transform BG_1;
-    private Transform BG_2;
-    private Transform BG_3;
-    private Transform BG_4;
+    private Transform BG;
     //RescueShipを入れる
     public GameObject Ship;
     private Transform ShipHP;
@@ -105,11 +103,6 @@ public class GameOver_Text_Controller : MonoBehaviour
         ShipHP = GameObject.Find("Rescue ship MaxHP").GetComponent<Transform>();
         //ScoreDisplayのオブジェクト/スクリプトを入れる
         ScoreDisplayScr = ScoreDisplay.GetComponent<ScoreDisplay_Controller>();
-        //BGのTransformを取得
-        BG_1 = GameObject.Find("BG_1").GetComponent<Transform>();
-        BG_2 = GameObject.Find("BG_2").GetComponent<Transform>();
-        BG_3 = GameObject.Find("BG_3").GetComponent<Transform>();
-        BG_4 = GameObject.Find("BG_4").GetComponent<Transform>();
 
         //AudioSourceを取得
         Audio = GetComponent<AudioSource>();
@@ -121,7 +114,7 @@ public class GameOver_Text_Controller : MonoBehaviour
         if (GameOver == true)
         {
             //Playerが倒されたor救助船が破壊された際は､1秒後に時間を止める
-            if ((ShipDeth == true || PlayerDeth == true) && _Text == false)
+            if ((ShipDeth == true || PlayerDeth == true) && Touch == 0)
             {
                 Button();
                 delta += Time.deltaTime;
@@ -137,7 +130,7 @@ public class GameOver_Text_Controller : MonoBehaviour
                     Time.timeScale = 0;
                 }
             }
-            else if((Enemy3Escape == true || HumanDeth == true) && _Text == false)
+            else if((Enemy3Escape == true || HumanDeth == true) && Touch == 0)
             {
                 Button();
                 //SEを出す
@@ -149,7 +142,7 @@ public class GameOver_Text_Controller : MonoBehaviour
                 StartCoroutine("GameOverCoroutine");
             }
             //シーンをロードする
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch >= 2)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch >= 3 && _Text >= 3)
             {
                 //SEを出す
                 Audio.PlayOneShot(TupSE);
@@ -157,7 +150,7 @@ public class GameOver_Text_Controller : MonoBehaviour
                 SceneManager.LoadScene("SampleScene");
             }
             //score用敵･人オブジェクトの表示
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 1 && _Text1 == true)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 2 && _Text == 2)
             {
                 _text.text = "";
                 //生成したオブジェクトを破壊､ShipHPを元の場所に戻す
@@ -172,16 +165,12 @@ public class GameOver_Text_Controller : MonoBehaviour
                 Audio.PlayOneShot(TupSE);
                 StartCoroutine("GameOverCoroutine");
 
-                Touch++;
             }
             //GameOver要因の表示
-            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 0 && _Text1 == true)
+            if ((Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)) && Touch == 1 && _Text == 1)
             {
                 //BG_1オブジェクトを前に出す
-                BG_1.position = new Vector3(0, 0, -6f);
-                BG_2.position = new Vector3(0, 0, -6f);
-                BG_3.position = new Vector3(0, 0, -6f);
-                BG_4.position = new Vector3(0, 0, -6f);
+                BG.position = new Vector3(0, 0, -6f);
                 //フォントサイズ変更
                 _text.fontSize = 50;
                 if (ShipDeth == true)
@@ -210,17 +199,20 @@ public class GameOver_Text_Controller : MonoBehaviour
                     FactorObj.transform.position = new Vector3(0f, 0f, -7.0f);
                 }
                 StartCoroutine("GameOverCoroutine");
-                Touch++;
             }
         }
     }
     IEnumerator GameOverCoroutine()
     {
-        _Text = true;
-        for (int i = 0; i <= 1; i++)
+        //コルーチン重複防止
+        Touch++;
+        yield return new WaitForSecondsRealtime(1.5f);
+        _Text++;
+        //1度のみ現在のBGを取得
+        if (GetBG == false)
         {
-            yield return new WaitForSecondsRealtime(1.5f);
-            _Text1 = true;
+            BG = GameObject.FindGameObjectWithTag("BG").GetComponent<Transform>();
+            GetBG = true;
         }
     }
     //ボタンを消す
@@ -236,23 +228,26 @@ public class GameOver_Text_Controller : MonoBehaviour
     //GameOver判断
     public void GameOverJudge(string Obj)
     {
-        GameOver = true;
-        //GameOver要因を取得
-        if(Obj == "Enemy3")
+        if (GameOver == false)
         {
-            Enemy3Escape = true;
-        }
-        else if(Obj == "Human")
-        {
-            HumanDeth = true;
-        }
-        else if (Obj == "Ship")
-        {
-            ShipDeth = true;
-        }
-        else if (Obj == "Player")
-        {
-            PlayerDeth = true;
+            //GameOver要因を取得
+            if (Obj == "Enemy3")
+            {
+                Enemy3Escape = true;
+            }
+            else if (Obj == "Human")
+            {
+                HumanDeth = true;
+            }
+            else if (Obj == "Ship")
+            {
+                ShipDeth = true;
+            }
+            else if (Obj == "Player")
+            {
+                PlayerDeth = true;
+            }
+            GameOver = true;
         }
     }
     //Humanスクリプトから呼ばれた際にスコア加算
@@ -287,6 +282,10 @@ public class GameOver_Text_Controller : MonoBehaviour
         Audio.PlayOneShot(LevelSE);
         for (float i = 1f; i >= 0; i -= 0.1f)
         {
+            if (GameOver == true)
+            {
+                break;
+            }
             Color StartColor = new Color32(255, 255, 0, 230);
             Color EbdColor = new Color32(255, 255, 0, 0);
             //GameOverの表示
@@ -294,7 +293,10 @@ public class GameOver_Text_Controller : MonoBehaviour
             _text.text = "Level "+ this.Level + "\n\n";
             yield return new WaitForSecondsRealtime(0.1f);
         }
-        _text.color = new Color32(255, 255, 0, 0);
+        if (GameOver == false)
+        {
+            _text.color = new Color32(255, 255, 0, 0); ;
+        }
     }
 
 }

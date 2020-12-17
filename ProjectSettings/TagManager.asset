@@ -16,6 +16,7 @@ TagManager:
   - Enemy3 Effect
   - Wave
   - WaveEffect
+  - BG
   layers:
   - Default
   - TransparentFX

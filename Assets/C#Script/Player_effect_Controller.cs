@@ -7,7 +7,7 @@ public class Player_effect_Controller : MonoBehaviour
     private float delta = 0;
     //GameOver_Textのゲームオブジェクト/スクリプトを入れる
     private GameOver_Text_Controller GameOverTextScr;
-    private bool GameOver;
+    private int GameOver;
 
     // Start is called before the first frame update
     void Start()
@@ -25,8 +25,8 @@ public class Player_effect_Controller : MonoBehaviour
             Destroy(this.gameObject);
         }
         ///GameOver状態の監視
-        this.GameOver = GameOverTextScr._Text1;
-        if (this.GameOver == true && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        this.GameOver = GameOverTextScr._Text;
+        if (this.GameOver >= 1 && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             Destroy(this.gameObject);
         }

@@ -36,7 +36,7 @@ public class Human_controller : MonoBehaviour
     private AudioSource Audio;
     public AudioClip LightSE;
     //GameOver監視用変数
-    private bool GameOver;
+    private int GameOver;
     //Playerにつかまれたかどうかの判断
     private bool PlayerCatch;
     //時間計算用
@@ -77,7 +77,7 @@ public class Human_controller : MonoBehaviour
         Catch = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch"));
         CatchRun = PlayerAnimator.GetCurrentAnimatorStateInfo(0).shortNameHash.Equals(Animator.StringToHash("Catch-Run"));
         //GameOver状態の監視
-        GameOver = GameOverTextScr._Text1;
+        GameOver = GameOverTextScr._Text;
 
         if (PlayerCatch == false && Contact == false)
         {
@@ -131,7 +131,7 @@ public class Human_controller : MonoBehaviour
             this._transform.position = Vector3.Lerp(this._transform.position, ShipTra, 0.5f * Time.deltaTime);
         }
         //GameOver時は破壊
-        if(GameOver == true && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
+        if(GameOver >= 1 && (Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0)))
         {
             Destroy(this.gameObject);
         }
