@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: 1afb4c29c7707e4449148ed76cb1ee4a
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - spikeballPrefab: {fileID: 6668618985697469988, guid: fecf0e990cfe38545a5256d40f77d7a4,
+      type: 3}
+  - spikeball_Red: {fileID: 5502577331702943641, guid: c843b85031811a5498c17dc41bb54441,
+      type: 3}
+  - Effect: {fileID: 4629904087263008873, guid: 202247d39ec0c2042bc4f84a4f988cfe,
+      type: 3}
+  - ItemWave: {fileID: 5292614667639603999, guid: 9be2450f8cda36a4da0362faa1827962,
+      type: 3}
+  - ItemRepair: {fileID: 1244000870825392505, guid: f1448a1c8f53d5947862252b004136ae,
+      type: 3}
+  - ItemRecovery: {fileID: 8668484766940028952, guid: 3046ffcbb8ab2594f917416077f58f09,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
