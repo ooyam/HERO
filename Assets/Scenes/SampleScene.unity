@@ -923,7 +923,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: a13258b83fa8e0b4788f5387aef9b82f, type: 3}
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
     m_FontSize: 85
     m_FontStyle: 3
     m_BestFit: 0
@@ -1921,7 +1921,7 @@ PrefabInstance:
     - target: {fileID: 3610600040160283542, guid: 4b5facc48925c394888ab3f36400693e,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: -4
       objectReference: {fileID: 0}
     - target: {fileID: 3610600040160283542, guid: 4b5facc48925c394888ab3f36400693e,
         type: 3}
@@ -1967,6 +1967,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player MaxHP
+      objectReference: {fileID: 0}
+    - target: {fileID: 3610600040322206564, guid: 4b5facc48925c394888ab3f36400693e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4b5facc48925c394888ab3f36400693e, type: 3}

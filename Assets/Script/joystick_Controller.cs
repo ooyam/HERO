@@ -66,7 +66,7 @@ public class joystick_Controller : MonoBehaviour
             {
                 //joystickを生成する
                 JoyStickObj = Instantiate(JoyStick);
-                JoyStickObj.transform.position = new Vector3(TapPos.x, TapPos.y, -5.5f);
+                JoyStickObj.transform.position = new Vector3(TapPos.x, TapPos.y, -5.0f);
                 //JoyHeadを生成する
                 JoyHeadObj = Instantiate(JoyHead);
                 JoyHeadObj.transform.position = new Vector3(TapPos.x, TapPos.y, -5.5f);
